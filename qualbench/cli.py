@@ -144,7 +144,7 @@ def quickstart(tool) -> None:
 @cli.command()
 @click.argument("tool")
 @click.option("--issue", "-i", default="QB-001")
-def compare(tool, issue):
+def compare(tool, issue) -> None:
     """Compare your tool against the leaderboard."""
     click.secho(f"📊 Comparing {tool} on {issue}", bold=True)
     click.echo()
@@ -161,7 +161,7 @@ def compare(tool, issue):
 
 @cli.command()
 @click.option("--dataset", "-d", default="dataset/qualbench-v0.json")
-def info(dataset):
+def info(dataset) -> None:
     """Show dataset summary."""
     try:
         ds = Dataset.load(dataset)
@@ -179,7 +179,7 @@ def info(dataset):
 
 
 @cli.command()
-def doctor():
+def doctor() -> None:
     """Check if required tools are available."""
     tools = {"python": "Python", "git": "Git", "docker": "Docker (optional)"}
     modules = {"pytest": "Test runner", "bandit": "Security scanner", "radon": "Complexity", "ruff": "Linter"}
@@ -207,7 +207,7 @@ def doctor():
 @click.option("--api-url", default="http://localhost:8000", help="Leaderboard API URL")
 @click.option("--token", envvar="QUALBENCH_API_TOKEN", default="demo-token", help="API token (or set QUALBENCH_API_TOKEN)")
 @click.option("--json-file", "-f", type=click.Path(exists=True), help="Submit from JSON file instead of running")
-def submit(tool, mode, issue, api_url, token, json_file):
+def submit(tool, mode, issue, api_url, token, json_file) -> None:
     """Submit benchmark result to leaderboard."""
     click.secho("📤 Submitting to QualBench Leaderboard", bold=True)
 
@@ -250,7 +250,7 @@ def submit(tool, mode, issue, api_url, token, json_file):
 @click.option("--api-url", default="http://localhost:8000", help="Leaderboard API URL")
 @click.option("--issue", "-i", help="Filter by issue ID")
 @click.option("--tool", "-t", help="Filter by tool name")
-def leaderboard(api_url, issue, tool):
+def leaderboard(api_url, issue, tool) -> None:
     """View current leaderboard rankings."""
     click.secho("📊 QualBench Leaderboard", bold=True)
 
