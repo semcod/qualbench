@@ -3,7 +3,6 @@
 import json
 import shutil
 import sys
-from pathlib import Path
 
 import click
 import requests
@@ -18,6 +17,14 @@ VERDICT_ICONS = {
     "needs_review": "⚠",
     "not_merge_ready": "❌",
 }
+
+# Quality thresholds
+SECURITY_THRESHOLD_GOOD = 80
+SECURITY_THRESHOLD_WARN = 50
+QUALITY_THRESHOLD_GOOD = 80
+QUALITY_THRESHOLD_WARN = 60
+MERGEABILITY_THRESHOLD = 70
+MAX_ACCEPTABLE_ITERATIONS = 2
 
 DIMENSION_LABELS = {
     "correctness": ("Correctness", "PASS" if True else "FAIL"),
@@ -47,26 +54,26 @@ def _print_report(result: QualBenchResult):
         click.echo("     ❌ Correctness:  FAIL")
 
     # Security
-    if d["security"] >= 80:
+    if d["security"] >= SECURITY_THRESHOLD_GOOD:
         click.echo(f"     ✔ Security:     {d['security']:.0f}")
-    elif d["security"] >= 50:
+    elif d["security"] >= SECURITY_THRESHOLD_WARN:
         click.echo(f"     ⚠ Security:     {d['security']:.0f} — issues detected")
     else:
         click.echo(f"     ❌ Security:     {d['security']:.0f} — critical issues")
 
     # Quality
-    if d["quality"] >= 80:
+    if d["quality"] >= QUALITY_THRESHOLD_GOOD:
         click.echo(f"     ✔ Quality:      {d['quality']:.0f}")
-    elif d["quality"] >= 60:
+    elif d["quality"] >= QUALITY_THRESHOLD_WARN:
         click.echo(f"     ⚠ Quality:      {d['quality']:.0f} — complexity concerns")
     else:
         click.echo(f"     ❌ Quality:      {d['quality']:.0f} — high complexity")
 
     # Mergeability
-    click.echo(f"     {'✔' if d['mergeability'] >= 70 else '⚠'} Mergeability:  {d['mergeability']:.0f}")
+    click.echo(f"     {'✔' if d['mergeability'] >= MERGEABILITY_THRESHOLD else '⚠'} Mergeability:  {d['mergeability']:.0f}")
 
     # Iterations
-    click.echo(f"     {'✔' if result.iterations <= 2 else '⚠'} Iterations:    {result.iterations}")
+    click.echo(f"     {'✔' if result.iterations <= MAX_ACCEPTABLE_ITERATIONS else '⚠'} Iterations:    {result.iterations}")
 
     # Cost
     click.echo(f"     💲 Cost:         ${result.cost_usd:.2f}")
@@ -279,7 +286,7 @@ def leaderboard(api_url, issue, tool):
         sys.exit(1)
 
 
-def main():
+def main() -> None:
     cli()
 
 

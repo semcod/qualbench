@@ -14,11 +14,9 @@ Usage:
 """
 
 import json
-import os
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Optional
-from pathlib import Path
 
 
 @dataclass
@@ -57,15 +55,19 @@ class SupervisorAI:
     """
     
     # Model cost and quality profiles
+    GPT35_QUALITY = 65
+    GPT4_QUALITY = 78
+    CLAUDE_SONNET_QUALITY = 85
+    
     MODELS = {
         "gpt-3.5-turbo": {
             "cost_per_1k": 0.0015,
-            "quality_estimate": 65,
+            "quality_estimate": GPT35_QUALITY,
             "speed": "fast",
         },
         "gpt-4": {
             "cost_per_1k": 0.03,
-            "quality_estimate": 78,
+            "quality_estimate": GPT4_QUALITY,
             "speed": "medium",
         },
         "gpt-4-turbo": {
@@ -75,7 +77,7 @@ class SupervisorAI:
         },
         "claude-3-5-sonnet": {
             "cost_per_1k": 0.003,
-            "quality_estimate": 85,
+            "quality_estimate": CLAUDE_SONNET_QUALITY,
             "speed": "medium",
         },
         "claude-3-opus": {
@@ -285,7 +287,7 @@ class SupervisorAI:
         ]
         
         results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=decision.parallel_runners) as executor:
+        with ThreadPoolExecutor(max_workers=decision.parallel_runners) as executor:
             futures = {
                 executor.submit(self._run_single, rid, model, decision, dataset_path): (rid, model)
                 for rid, model in runners
@@ -350,7 +352,7 @@ class SupervisorAI:
         }
 
 
-def main():
+def main() -> None:
     """CLI for supervisor AI."""
     import argparse
     

@@ -9,7 +9,6 @@ Day one: JSON file storage (no database).
 
 import json
 import os
-from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -17,8 +16,6 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-
-from qualbench.benchmark import QualBenchResult
 
 app = FastAPI(
     title="QualBench Leaderboard API",
@@ -39,6 +36,11 @@ RESULTS_FILE = DATA_DIR / "results.json"
 
 # Simple token auth for tool owners (day one: single token or demo mode)
 API_TOKEN = os.getenv("QUALBENCH_API_TOKEN", "demo-token")
+
+
+HTTP_CREATED = 201
+HTTP_UNAUTHORIZED = 401
+HTTP_NOT_FOUND = 404
 
 
 class ResultSubmission(BaseModel):
@@ -87,7 +89,7 @@ def _save_results(results: list[dict]):
         json.dump(results, f, indent=2, default=str)
 
 
-@app.post("/api/v1/results", status_code=201)
+@app.post("/api/v1/results", status_code=HTTP_CREATED)
 def submit_result(
     submission: ResultSubmission,
     authorization: str = Header(None, alias="Authorization"),
@@ -96,7 +98,7 @@ def submit_result(
     # Auth check (day one: simple token, can be per-tool later)
     token = authorization.replace("Bearer ", "") if authorization else ""
     if token != API_TOKEN and API_TOKEN != "demo-token":
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=HTTP_UNAUTHORIZED, detail="Invalid token")
 
     result = {
         **submission.model_dump(),
@@ -178,7 +180,7 @@ def get_result(tool: str, issue_id: str) -> dict:
     for r in results:
         if r.get("tool") == tool and r.get("issue_id") == issue_id:
             return r
-    raise HTTPException(status_code=404, detail="Result not found")
+    raise HTTPException(status_code=HTTP_NOT_FOUND, detail="Result not found")
 
 
 @app.get("/health")
