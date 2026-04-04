@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qualbench"
-version = "0.2.1"
+version = "0.3.0"
 description = "CI for AI-generated code — measures production readiness, not just correctness"
 readme = "README.md"
 license = "Apache-2.0"
@@ -13,13 +13,20 @@ authors = [
     { name = "Softreck", email = "info@softreck.com" },
     {name = "Tom Sapletta", email = "tom@sapletta.com"},
 ]
-keywords = ["benchmark", "ai", "code-quality", "ci", "quality-gates", "swe-bench"]
+keywords = ["benchmark", "ai", "code-quality", "ci", "quality-gates", "swe-bench", "llm", "code-review"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Quality Assurance",
     "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
 ]
 dependencies = [
     "click>=8.1",
