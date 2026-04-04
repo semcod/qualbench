@@ -1,0 +1,1179 @@
+{
+  "version": "1.0.0",
+  "name": "QualBench-v1",
+  "description": "50 real-world issues measuring AI code production readiness (Python + TypeScript)",
+  "created": "2026-04-04",
+  "methodology": "docs/methodology.md",
+  "stats": {
+    "total_issues": 50,
+    "python_issues": 35,
+    "typescript_issues": 15,
+    "repositories": [
+      " Celery/celery",
+      "Celery/celery",
+      "django/django",
+      "encode/httpx",
+      "encode/starlette",
+      "encode/uvicorn",
+      "expressjs/express",
+      "pallets/click",
+      "pallets/flask",
+      "pallets/jinja",
+      "psf/black",
+      "psf/requests",
+      "pydantic/pydantic",
+      "pytest-dev/pytest",
+      "python-poetry/poetry",
+      "python/mypy",
+      "redis/redis-py",
+      "sqlalchemy/sqlalchemy",
+      "tiangolo/fastapi",
+      "typeorm/typeorm",
+      "vercel/next.js"
+    ],
+    "languages": [
+      "Python",
+      "TypeScript"
+    ],
+    "by_difficulty": {
+      "simple": 19,
+      "medium": 19,
+      "hard": 10,
+      "security": 2
+    },
+    "by_category": {
+      "bug_fix": 21,
+      "feature": 14,
+      "refactor": 13,
+      "vulnerability": 2
+    }
+  },
+  "issues": [
+    {
+      "id": "QB-001",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "pallets/flask",
+      "version": "3.1.x",
+      "title": "Missing error handler for HTTP 405 Method Not Allowed",
+      "problem_statement": "When a route exists but the HTTP method is not allowed, Flask returns a generic 405 response without invoking any registered error handler. Users who register `@app.errorhandler(405)` expect their custom handler to be called, but it is bypassed when the MethodNotAllowed exception is raised by the routing layer.",
+      "expected_fix": "Ensure MethodNotAllowed exceptions from the router pass through the app's error handler dispatch.",
+      "evaluation": {
+        "tests_required": [
+          "test_405_custom_handler",
+          "test_405_default_still_works",
+          "test_method_not_allowed_with_valid_methods"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 30
+        }
+      }
+    },
+    {
+      "id": "QB-002",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "psf/requests",
+      "version": "2.32.x",
+      "title": "Incorrect encoding detection for responses with BOM",
+      "problem_statement": "When a server returns a response with a UTF-8 BOM but does not declare charset in Content-Type header, requests falls back to apparent_encoding which sometimes detects incorrectly.",
+      "expected_fix": "Check for BOM bytes at the start of response content before falling back to apparent_encoding.",
+      "evaluation": {
+        "tests_required": [
+          "test_bom_utf8_detection",
+          "test_no_bom_fallback_unchanged",
+          "test_bom_utf16_detection"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 20
+        }
+      }
+    },
+    {
+      "id": "QB-003",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "tiangolo/fastapi",
+      "version": "0.115.x",
+      "title": "Missing validation for negative values in integer query parameter with ge=0",
+      "problem_statement": "When declaring a query parameter with `Query(ge=0)`, FastAPI should reject negative integer values. However, when passed as string like `?page=-1`, validation passes.",
+      "expected_fix": "Ensure Query parameter validators apply ge/le/gt/lt constraints consistently.",
+      "evaluation": {
+        "tests_required": [
+          "test_negative_query_param_rejected",
+          "test_zero_query_param_accepted",
+          "test_positive_query_param_accepted"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25
+        }
+      }
+    },
+    {
+      "id": "QB-004",
+      "difficulty": "medium",
+      "category": "bug_fix",
+      "repo": "django/django",
+      "version": "5.1.x",
+      "title": "Template filter |escape inconsistency with mark_safe in nested blocks",
+      "problem_statement": "When using `|escape` filter on a variable marked safe with `mark_safe()`, it should re-escape. Inside nested `{% block %}` tags, `|escape` is silently ignored for mark_safe'd content.",
+      "expected_fix": "Fix template engine's escape filter to consistently apply escaping regardless of block inheritance context.",
+      "evaluation": {
+        "tests_required": [
+          "test_escape_mark_safe_in_block",
+          "test_escape_mark_safe_top_level",
+          "test_autoescape_still_works",
+          "test_nested_block_escape"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 40
+        }
+      }
+    },
+    {
+      "id": "QB-005",
+      "difficulty": "medium",
+      "category": "bug_fix",
+      "repo": "encode/httpx",
+      "version": "0.28.x",
+      "title": "Connection pool timeout not respected when all connections are in use",
+      "problem_statement": "When using `httpx.AsyncClient` with `Limits(max_connections=10)` and all connections are in use, new requests should wait up to `pool_timeout` seconds. Instead, requests wait indefinitely.",
+      "expected_fix": "Implement timeout enforcement in the connection pool acquisition path.",
+      "evaluation": {
+        "tests_required": [
+          "test_pool_timeout_fires",
+          "test_pool_timeout_zero_immediate",
+          "test_pool_connection_released_reused"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 50
+        }
+      }
+    },
+    {
+      "id": "QB-006",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "pydantic/pydantic",
+      "version": "2.10.x",
+      "title": "Recursive model serialization exceeds max depth without clear error",
+      "problem_statement": "When a Pydantic model has a self-referential field, calling `.model_dump()` on a deeply nested instance causes a `RecursionError` with no clear indication of what went wrong.",
+      "expected_fix": "Add max_depth parameter to model_dump() and model_dump_json() with a clear error when exceeded.",
+      "evaluation": {
+        "tests_required": [
+          "test_recursive_dump_with_max_depth",
+          "test_recursive_dump_error_message",
+          "test_non_recursive_unaffected",
+          "test_max_depth_json"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 60
+        }
+      }
+    },
+    {
+      "id": "QB-007",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "pallets/flask",
+      "version": "3.1.x",
+      "title": "Extract blueprint error handling logic into a dedicated module",
+      "problem_statement": "Flask's `app.py` contains error handling logic tightly coupled with blueprint registration. The error handling code is spread across multiple methods making customization difficult.",
+      "expected_fix": "New module `flask/error_handling.py` with `ErrorDispatcher` class. All existing tests must pass.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_existing_error_tests_pass",
+          "test_error_dispatcher_class_exists",
+          "test_blueprint_error_isolation"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 200
+        }
+      }
+    },
+    {
+      "id": "QB-008",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "encode/starlette",
+      "version": "0.41.x",
+      "title": "Reduce middleware chain cyclomatic complexity",
+      "problem_statement": "Starlette's middleware stack `build_middleware_stack` has grown to CC > 15 with nested conditionals for different middleware types.",
+      "expected_fix": "Refactor build_middleware_stack to use strategy pattern. CC must drop below 10.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_existing_middleware_tests_pass",
+          "test_cc_below_threshold"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_before_must_be_higher": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 150
+        }
+      }
+    },
+    {
+      "id": "QB-009",
+      "difficulty": "security",
+      "category": "vulnerability",
+      "repo": "tiangolo/fastapi",
+      "version": "0.115.x",
+      "title": "Path parameter injection in generated OpenAPI schema URL",
+      "problem_statement": "FastAPI's OpenAPI schema generation interpolates path parameters into example URLs without sanitization. A malicious path parameter value containing JavaScript is rendered unsanitized in Swagger UI.",
+      "expected_fix": "Escape path parameter examples in OpenAPI schema generation. Add CSP headers to docs endpoints.",
+      "evaluation": {
+        "tests_required": [
+          "test_path_param_xss_escaped",
+          "test_openapi_schema_safe_output",
+          "test_swagger_ui_csp_header"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "must_fix_bandit_issue": true,
+          "max_lines_changed": 40
+        }
+      }
+    },
+    {
+      "id": "QB-010",
+      "difficulty": "security",
+      "category": "vulnerability",
+      "repo": "django/django",
+      "version": "5.1.x",
+      "title": "Reflected XSS in admin changelist filter parameter",
+      "problem_statement": "Django admin changelist view reflects filter parameter names in page HTML without proper escaping. Crafted URL can render script tags.",
+      "expected_fix": "Escape filter parameter names in admin changelist template. Add test for XSS in filter params.",
+      "evaluation": {
+        "tests_required": [
+          "test_admin_filter_xss_escaped",
+          "test_admin_filter_normal_still_works",
+          "test_admin_filter_unicode_safe"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "must_fix_bandit_issue": true,
+          "max_lines_changed": 30
+        }
+      }
+    },
+    {
+      "id": "QB-011",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "python-poetry/poetry",
+      "version": "1.8.x",
+      "title": "Version constraint parsing fails for caret with pre-release",
+      "problem_statement": "Poetry fails to parse version constraints like `^1.0.0-alpha` correctly, treating pre-release as incompatible with caret constraints.",
+      "expected_fix": "Update version parser to handle pre-release versions in caret/tilde constraints.",
+      "evaluation": {
+        "tests_required": [
+          "test_caret_with_prerelease",
+          "test_tilde_with_prerelease",
+          "test_normal_versions_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25
+        }
+      }
+    },
+    {
+      "id": "QB-012",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": " Celery/celery",
+      "version": "5.4.x",
+      "title": "Task retry with countdown=0 should execute immediately",
+      "problem_statement": "When calling `self.retry(countdown=0)`, the task is not retried immediately but scheduled with a delay, causing unexpected latency.",
+      "expected_fix": "Detect countdown=0 and retry synchronously without scheduling overhead.",
+      "evaluation": {
+        "tests_required": [
+          "test_retry_countdown_zero_immediate",
+          "test_retry_countdown_nonzero_scheduled",
+          "test_retry_no_countdown_default"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 20
+        }
+      }
+    },
+    {
+      "id": "QB-013",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "pytest-dev/pytest",
+      "version": "8.3.x",
+      "title": "Parameterized test IDs with special characters not escaped",
+      "problem_statement": "When using `@pytest.mark.parametrize` with IDs containing brackets or spaces, the test node ID becomes malformed and pytest cannot select the test by ID.",
+      "expected_fix": "Escape special characters in parameterized test IDs.",
+      "evaluation": {
+        "tests_required": [
+          "test_param_id_with_brackets",
+          "test_param_id_with_spaces",
+          "test_param_id_normal_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 15
+        }
+      }
+    },
+    {
+      "id": "QB-014",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "sqlalchemy/sqlalchemy",
+      "version": "2.0.x",
+      "title": "Column default not applied on bulk_insert_mappings",
+      "problem_statement": "When using `session.bulk_insert_mappings()`, column defaults defined with `Column(default=...)` are not applied, resulting in NULL values.",
+      "expected_fix": "Ensure column defaults are applied during bulk_insert_mappings.",
+      "evaluation": {
+        "tests_required": [
+          "test_bulk_insert_with_default",
+          "test_bulk_insert_without_default_unchanged",
+          "test_bulk_update_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 30
+        }
+      }
+    },
+    {
+      "id": "QB-015",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "psf/black",
+      "version": "24.x",
+      "title": "String concatenation inside f-string not formatted",
+      "problem_statement": "Black fails to format implicit string concatenation inside f-string expressions, leaving them unwrapped.",
+      "expected_fix": "Handle string concatenation in f-string expressions during formatting.",
+      "evaluation": {
+        "tests_required": [
+          "test_fstring_concat_formatting",
+          "test_normal_concat_unchanged",
+          "test_nested_fstring_concat"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 40
+        }
+      }
+    },
+    {
+      "id": "QB-016",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "pallets/click",
+      "version": "8.1.x",
+      "title": "Choice option with int values fails validation",
+      "problem_statement": "When using `@click.option(type=click.Choice([1, 2, 3]))`, Click fails to validate integer choices correctly, treating them as strings.",
+      "expected_fix": "Support integer (and other non-string) values in Choice type.",
+      "evaluation": {
+        "tests_required": [
+          "test_int_choice_validation",
+          "test_int_choice_conversion",
+          "test_str_choice_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25
+        }
+      }
+    },
+    {
+      "id": "QB-017",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "encode/uvicorn",
+      "version": "0.30.x",
+      "title": "Root path not applied to WebSocket upgrade requests",
+      "problem_statement": "When using `--root-path /api`, HTTP requests are correctly routed but WebSocket upgrade requests ignore the root path.",
+      "expected_fix": "Apply root_path to WebSocket upgrade path matching.",
+      "evaluation": {
+        "tests_required": [
+          "test_websocket_root_path",
+          "test_http_root_path_unchanged",
+          "test_no_root_path_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 20
+        }
+      }
+    },
+    {
+      "id": "QB-018",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "python/mypy",
+      "version": "1.10.x",
+      "title": "Type narrowing not applied in else branch of isinstance check",
+      "problem_statement": "When using `if isinstance(x, A): ... else: ...`, mypy does not narrow the type in the else branch for Union types.",
+      "expected_fix": "Apply type narrowing in else branch for Union subtraction.",
+      "evaluation": {
+        "tests_required": [
+          "test_isinstance_else_narrowing",
+          "test_union_subtraction",
+          "test_no_isinstance_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 35
+        }
+      }
+    },
+    {
+      "id": "QB-019",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "redis/redis-py",
+      "version": "5.0.x",
+      "title": "Connection pool not releasing on async generator cancellation",
+      "problem_statement": "When an async generator using Redis is cancelled (e.g., via `asyncio.timeout`), the connection is not returned to the pool, causing pool exhaustion.",
+      "expected_fix": "Ensure connection release in finally block of async generator.",
+      "evaluation": {
+        "tests_required": [
+          "test_async_gen_cancel_release",
+          "test_normal_release_unchanged",
+          "test_context_manager_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25
+        }
+      }
+    },
+    {
+      "id": "QB-020",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "pallets/jinja",
+      "version": "3.1.x",
+      "title": "Macro with default argument using context variable fails",
+      "problem_statement": "When a macro defines a default argument that references a context variable, it fails to resolve at call time.",
+      "expected_fix": "Ensure macro default arguments are evaluated in the correct context scope.",
+      "evaluation": {
+        "tests_required": [
+          "test_macro_default_context_var",
+          "test_macro_default_literal_unchanged",
+          "test_macro_call_with_override"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 20
+        }
+      }
+    },
+    {
+      "id": "QB-021",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "pydantic/pydantic",
+      "version": "2.10.x",
+      "title": "Add computed_field decorator for dynamic properties",
+      "problem_statement": "Users want to include computed/dynamic properties in model serialization without manually adding them to model_config.",
+      "expected_fix": "Implement `@computed_field` decorator that automatically includes decorated properties in model_dump().",
+      "evaluation": {
+        "tests_required": [
+          "test_computed_field_included",
+          "test_computed_field_cached",
+          "test_computed_field_with_deps"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 80
+        }
+      }
+    },
+    {
+      "id": "QB-022",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "tiangolo/fastapi",
+      "version": "0.115.x",
+      "title": "Add websocket exception handler support",
+      "problem_statement": "FastAPI supports exception handlers for HTTP but not for WebSocket connections, making error handling inconsistent.",
+      "expected_fix": "Add `@app.websocket_exception_handler` decorator and WebSocketException class.",
+      "evaluation": {
+        "tests_required": [
+          "test_websocket_exception_handler",
+          "test_websocket_exception_format",
+          "test_http_handler_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 60
+        }
+      }
+    },
+    {
+      "id": "QB-023",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "encode/httpx",
+      "version": "0.28.x",
+      "title": "Add request/response hook registry",
+      "problem_statement": "Users need to register hooks that run before requests are sent and after responses are received for metrics/logging.",
+      "expected_fix": "Implement `Client(event_hooks={'request': [...], 'response': [...]})` API.",
+      "evaluation": {
+        "tests_required": [
+          "test_request_hook_called",
+          "test_response_hook_called",
+          "test_async_hooks",
+          "test_hook_error_handling"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 70
+        }
+      }
+    },
+    {
+      "id": "QB-024",
+      "difficulty": "medium",
+      "category": "refactor",
+      "repo": "django/django",
+      "version": "5.1.x",
+      "title": "Extract database query compilation to visitor pattern",
+      "problem_statement": "The query compiler in `django/db/models/sql/compiler.py` is a single large class with methods for each SQL clause, violating SRP.",
+      "expected_fix": "Refactor to use visitor pattern with separate classes for each clause type. CC < 10 per class.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_existing_query_tests_pass",
+          "test_visitor_classes_exist"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 180
+        }
+      }
+    },
+    {
+      "id": "QB-025",
+      "difficulty": "medium",
+      "category": "refactor",
+      "repo": "psf/black",
+      "version": "24.x",
+      "title": "Extract line wrapping logic into dedicated formatter",
+      "problem_statement": "Black's line wrapping logic is spread across multiple visitor methods in `linegen.py`, making it hard to customize.",
+      "expected_fix": "Create `LineWrapper` class encapsulating all wrapping decisions. Reduce visitor method complexity.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_wrapping_tests_pass",
+          "test_line_wrapper_class_exists"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 150
+        }
+      }
+    },
+    {
+      "id": "QB-026",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "sqlalchemy/sqlalchemy",
+      "version": "2.0.x",
+      "title": "Add async support for ORM events",
+      "problem_statement": "SQLAlchemy ORM events (before_insert, after_update, etc.) only support sync callbacks, preventing async operations in event handlers.",
+      "expected_fix": "Allow async callbacks in ORM event listeners with proper event loop handling.",
+      "evaluation": {
+        "tests_required": [
+          "test_async_event_listener",
+          "test_sync_listener_unchanged",
+          "test_mixed_listeners"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 80
+        }
+      }
+    },
+    {
+      "id": "QB-027",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "pytest-dev/pytest",
+      "version": "8.3.x",
+      "title": "Add test selection by marker expression with regex",
+      "problem_statement": "The `-m` option only supports simple boolean expressions. Users need regex matching for marker names.",
+      "expected_fix": "Support `-m '/pattern/'` syntax for regex marker selection.",
+      "evaluation": {
+        "tests_required": [
+          "test_regex_marker_selection",
+          "test_regex_no_matches",
+          "test_normal_marker_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 40
+        }
+      }
+    },
+    {
+      "id": "QB-028",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "python-poetry/poetry",
+      "version": "1.8.x",
+      "title": "Add dependency resolution visualizer/debug mode",
+      "problem_statement": "When dependency resolution fails, users get cryptic error messages without understanding why versions conflict.",
+      "expected_fix": "Add `--verbose-resolve` flag that outputs resolution tree and conflict explanations.",
+      "evaluation": {
+        "tests_required": [
+          "test_verbose_resolve_output",
+          "test_normal_resolve_unchanged",
+          "test_conflict_explained"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 60
+        }
+      }
+    },
+    {
+      "id": "QB-029",
+      "difficulty": "medium",
+      "category": "refactor",
+      "repo": "encode/starlette",
+      "version": "0.41.x",
+      "title": "Extract routing trie matching to dedicated module",
+      "problem_statement": "The routing trie matching logic is embedded in Router class, making it hard to test and optimize independently.",
+      "expected_fix": "Create `RoutingTrie` class in new module with all matching logic. Router delegates to it.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_routing_tests_pass",
+          "test_routing_trie_class_exists",
+          "test_trie_isolated"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 120
+        }
+      }
+    },
+    {
+      "id": "QB-030",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "Celery/celery",
+      "version": "5.4.x",
+      "title": "Add task priority support for Redis broker",
+      "problem_statement": "Celery supports task priorities for RabbitMQ but not for Redis, causing unfair task scheduling.",
+      "expected_fix": "Implement priority queue support in Redis transport using sorted sets or multiple lists.",
+      "evaluation": {
+        "tests_required": [
+          "test_redis_task_priority",
+          "test_priority_ordering",
+          "test_no_priority_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 80
+        }
+      }
+    },
+    {
+      "id": "QB-031",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "psf/black",
+      "version": "24.x",
+      "title": "Implement parallel file formatting with process pool",
+      "problem_statement": "Black processes files sequentially. Large codebases take too long to format.",
+      "expected_fix": "Add `-j/--jobs` option using multiprocessing.Pool for parallel file formatting.",
+      "evaluation": {
+        "tests_required": [
+          "test_parallel_formatting_correct",
+          "test_parallel_no_race_conditions",
+          "test_single_job_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 100
+        }
+      }
+    },
+    {
+      "id": "QB-032",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "sqlalchemy/sqlalchemy",
+      "version": "2.0.x",
+      "title": "Extract SQL dialect compilation to plugin system",
+      "problem_statement": "Dialect-specific compilation is spread across the core compiler with if/else chains. Adding new dialects requires modifying core.",
+      "expected_fix": "Create DialectCompiler plugin interface. Move each dialect to separate module implementing this interface.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_dialects_compile_correctly",
+          "test_dialect_compiler_interface",
+          "test_custom_dialect_registration"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 250
+        }
+      }
+    },
+    {
+      "id": "QB-033",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "encode/uvicorn",
+      "version": "0.30.x",
+      "title": "Implement HTTP/2 server push support",
+      "problem_statement": "Uvicorn only supports HTTP/1.1. Modern web apps need HTTP/2 features like server push.",
+      "expected_fix": "Add HTTP/2 protocol handler with server push API. Maintain HTTP/1.1 compatibility.",
+      "evaluation": {
+        "tests_required": [
+          "test_http2_handshake",
+          "test_server_push_api",
+          "test_http1_fallback",
+          "test_push_cache_digest"
+        ],
+        "quality_gates": {
+          "cc_max": 15,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 300
+        }
+      }
+    },
+    {
+      "id": "QB-034",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "pallets/click",
+      "version": "8.1.x",
+      "title": "Extract command parsing to proper parser combinator library",
+      "problem_statement": "Click's command parsing is implemented as nested conditional logic with manual backtracking. Complex commands have bugs.",
+      "expected_fix": "Implement proper parser combinator library. Rewrite command parsing to use it. All existing tests pass.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_existing_parsing_tests_pass",
+          "test_combinator_classes_exist",
+          "test_nested_commands_parsed_correctly"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 280
+        }
+      }
+    },
+    {
+      "id": "QB-035",
+      "difficulty": "hard",
+      "category": "feature",
+      "repo": "python/mypy",
+      "version": "1.10.x",
+      "title": "Add gradual typing inference for unannotated code",
+      "problem_statement": "MyPy requires full annotations or ignores unannotated code. Users want gradual inference for legacy codebases.",
+      "expected_fix": "Implement type inference engine for unannotated functions based on usage patterns. Add `--infer-types` flag.",
+      "evaluation": {
+        "tests_required": [
+          "test_inference_basic_functions",
+          "test_inference_with_generics",
+          "test_inference_limits"
+        ],
+        "quality_gates": {
+          "cc_max": 15,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 400
+        }
+      }
+    },
+    {
+      "id": "QB-036",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "expressjs/express",
+      "version": "4.19.x",
+      "title": "Query string parsing fails for nested arrays",
+      "problem_statement": "Express query parser treats `?tags=a&tags=b` as array but `?tags[0]=a&tags[1]=b` as object, causing inconsistent behavior.",
+      "expected_fix": "Handle both array formats consistently in query parser.",
+      "evaluation": {
+        "tests_required": [
+          "test_nested_array_query",
+          "test_flat_array_query",
+          "test_mixed_query"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 30,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-037",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "expressjs/express",
+      "version": "4.19.x",
+      "title": "Router param callback not called for wildcard routes",
+      "problem_statement": "When using `router.param('id', fn)` with wildcard routes like `/*`, the param callback is not invoked.",
+      "expected_fix": "Ensure param callbacks run before wildcard matching.",
+      "evaluation": {
+        "tests_required": [
+          "test_param_callback_wildcard",
+          "test_param_callback_normal",
+          "test_param_callback_order"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-038",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "expressjs/express",
+      "version": "4.19.x",
+      "title": "Add async error handling middleware",
+      "problem_statement": "Async route handlers that throw errors don't propagate to error middleware correctly without manual try/catch.",
+      "expected_fix": "Auto-wrap async handlers to catch rejected promises and forward to error middleware.",
+      "evaluation": {
+        "tests_required": [
+          "test_async_error_caught",
+          "test_sync_error_unchanged",
+          "test_async_error_in_nested_router"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 40,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-039",
+      "difficulty": "medium",
+      "category": "refactor",
+      "repo": "expressjs/express",
+      "version": "4.19.x",
+      "title": "Extract route matching trie into separate module",
+      "problem_statement": "Route matching logic is embedded in router/index.js. Complex route sets have performance issues.",
+      "expected_fix": "Create RouteTrie class with optimized path-to-handler lookup.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_routing_tests_pass",
+          "test_route_trie_class",
+          "test_performance_improvement"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 150,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-040",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "expressjs/express",
+      "version": "4.19.x",
+      "title": "Implement HTTP/2 server support",
+      "problem_statement": "Express only supports HTTP/1.1. Modern applications need HTTP/2 features.",
+      "expected_fix": "Add HTTP/2 compatibility layer maintaining all existing middleware API.",
+      "evaluation": {
+        "tests_required": [
+          "test_http2_handshake",
+          "test_http2_push",
+          "test_http1_fallback",
+          "test_middleware_compatibility"
+        ],
+        "quality_gates": {
+          "cc_max": 15,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 250,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-041",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "vercel/next.js",
+      "version": "14.x",
+      "title": "Image optimization fails for external SVG URLs",
+      "problem_statement": "Next.js Image component throws error when src points to external SVG URL without dimensions.",
+      "expected_fix": "Handle SVG detection for external URLs and skip optimization.",
+      "evaluation": {
+        "tests_required": [
+          "test_external_svg_handled",
+          "test_local_svg_unchanged",
+          "test_external_png_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-042",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "vercel/next.js",
+      "version": "14.x",
+      "title": "Middleware rewrite with query params not encoded",
+      "problem_statement": "When using `NextResponse.rewrite()` with query parameters containing special characters, they are not properly URL-encoded.",
+      "expected_fix": "Ensure query parameters are encoded in rewrite URLs.",
+      "evaluation": {
+        "tests_required": [
+          "test_rewrite_query_encoded",
+          "test_rewrite_no_query_unchanged",
+          "test_rewrite_unicode"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 20,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-043",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "vercel/next.js",
+      "version": "14.x",
+      "title": "Add partial prerendering for dynamic routes",
+      "problem_statement": "Dynamic routes must choose between SSR (slow) or SSG (stale). Users want to prerender static shell and stream dynamic content.",
+      "expected_fix": "Implement partial prerendering: static shell + suspense boundaries for dynamic data.",
+      "evaluation": {
+        "tests_required": [
+          "test_partial_prerender_generated",
+          "test_shell_rendered_first",
+          "test_dynamic_content_streamed"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 100,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-044",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "vercel/next.js",
+      "version": "14.x",
+      "title": "Add Edge runtime support for Server Actions",
+      "problem_statement": "Server Actions only work in Node.js runtime. Edge runtime users cannot use them.",
+      "expected_fix": "Implement Server Actions handler for Edge runtime with proper serialization.",
+      "evaluation": {
+        "tests_required": [
+          "test_edge_server_action",
+          "test_action_serialization",
+          "test_node_runtime_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 80,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-045",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "vercel/next.js",
+      "version": "14.x",
+      "title": "Extract bundler to plugin-based architecture",
+      "problem_statement": "Webpack/Turbopack integration is hardcoded throughout Next.js. Adding new bundlers requires core changes.",
+      "expected_fix": "Create BundlerPlugin interface. Migrate webpack to plugin. Add turbopack as separate plugin.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_build_tests_pass",
+          "test_bundler_plugin_interface",
+          "test_webpack_as_plugin"
+        ],
+        "quality_gates": {
+          "cc_max": 15,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 300,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-046",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "typeorm/typeorm",
+      "version": "0.3.x",
+      "title": "Decimal column precision lost in SQLite driver",
+      "problem_statement": "When using `type: 'decimal'` with precision in SQLite, values are stored as REAL losing precision.",
+      "expected_fix": "Store decimals as TEXT in SQLite with proper conversion.",
+      "evaluation": {
+        "tests_required": [
+          "test_decimal_sqlite_precision",
+          "test_decimal_other_drivers_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-047",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "typeorm/typeorm",
+      "version": "0.3.x",
+      "title": "FindOne with select option excludes relation IDs",
+      "problem_statement": "When using `select: ['id', 'name']` in findOne, the relation IDs are not loaded even if relations are specified.",
+      "expected_fix": "Include relation IDs in select results.",
+      "evaluation": {
+        "tests_required": [
+          "test_select_with_relations",
+          "test_select_without_relations_unchanged"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 30,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-048",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "typeorm/typeorm",
+      "version": "0.3.x",
+      "title": "Add query builder streaming for large results",
+      "problem_statement": "Loading millions of rows with `getMany()` exhausts memory. Users need streaming interface.",
+      "expected_fix": "Implement `stream()` method on QueryBuilder returning async iterator.",
+      "evaluation": {
+        "tests_required": [
+          "test_stream_basic",
+          "test_stream_with_transform",
+          "test_stream_error_handling"
+        ],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 60,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-049",
+      "difficulty": "medium",
+      "category": "refactor",
+      "repo": "typeorm/typeorm",
+      "version": "0.3.x",
+      "title": "Extract driver-specific query generation to strategy pattern",
+      "problem_statement": "Query generation has switch statements for each driver throughout QueryBuilder.",
+      "expected_fix": "Create DriverQueryStrategy interface. Move each driver to separate strategy class.",
+      "evaluation": {
+        "tests_required": [
+          "test_all_driver_tests_pass",
+          "test_strategy_classes_exist"
+        ],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 200,
+          "language": "typescript"
+        }
+      }
+    },
+    {
+      "id": "QB-050",
+      "difficulty": "hard",
+      "category": "feature",
+      "repo": "typeorm/typeorm",
+      "version": "0.3.x",
+      "title": "Add entity schema validation at compile time",
+      "problem_statement": "Entity decorators are validated at runtime. Many errors could be caught by TypeScript.",
+      "expected_fix": "Implement advanced TypeScript types that validate entity schemas at compile time.",
+      "evaluation": {
+        "tests_required": [
+          "test_compile_time_validation",
+          "test_invalid_schema_fails",
+          "test_valid_schema_passes"
+        ],
+        "quality_gates": {
+          "cc_max": 15,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 150,
+          "language": "typescript"
+        }
+      }
+    }
+  ]
+}

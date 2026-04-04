@@ -1,4 +1,4 @@
-.PHONY: all setup benchmark evaluate score leaderboard test lint clean
+.PHONY: all setup benchmark evaluate score leaderboard test lint serve clean
 
 DATASET = dataset/qualbench-v0.json
 RESULTS_DIR = results
@@ -60,10 +60,26 @@ leaderboard:
 # --- Docker ---
 
 docker-build:
-	docker build -t softreck/qualbench-action:latest action/
+	docker build -t semcod/qualbench-action:latest action/
 
 docker-run:
-	docker run --rm -v $(PWD):/workspace -w /workspace softreck/qualbench-action:latest
+	docker run --rm -v $(PWD):/workspace -w /workspace semcod/qualbench-action:latest
+
+# --- Web Server ---
+
+serve:
+	python server.py
+
+serve-api:
+	uvicorn qualbench.api:app --reload --port 8000
+
+# --- Leaderboard API ---
+
+submit:
+	qualbench submit --tool prollama
+
+view-leaderboard:
+	qualbench leaderboard
 
 # --- Cleanup ---
 

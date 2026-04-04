@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import click
+import requests
 
 from qualbench import __version__
 from qualbench.dataset import Dataset
@@ -190,6 +191,92 @@ def doctor():
         except ImportError:
             s = click.style("MISSING", fg="red")
         click.echo(f"  {s} {mod} — {desc}")
+
+
+@cli.command()
+@click.option("--tool", "-t", default="prollama", help="AI tool name")
+@click.option("--mode", "-m", default="quality", type=click.Choice(["cheap", "quality", "secure"]))
+@click.option("--issue", "-i", default="LOCAL", help="Issue ID to submit for")
+@click.option("--api-url", default="http://localhost:8000", help="Leaderboard API URL")
+@click.option("--token", envvar="QUALBENCH_API_TOKEN", default="demo-token", help="API token (or set QUALBENCH_API_TOKEN)")
+@click.option("--json-file", "-f", type=click.Path(exists=True), help="Submit from JSON file instead of running")
+def submit(tool, mode, issue, api_url, token, json_file):
+    """Submit benchmark result to leaderboard."""
+    click.secho("📤 Submitting to QualBench Leaderboard", bold=True)
+
+    if json_file:
+        with open(json_file) as f:
+            result_data = json.load(f)
+        click.echo(f"   Loading result from {json_file}")
+    else:
+        click.echo(f"   Running benchmark: {tool} on {issue}")
+        runner = QualBenchRunner(tool=tool, mode=mode, cwd=".")
+        result = runner.run(issue_id=issue)
+        result_data = result.to_dict()
+        _print_report(result)
+
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    try:
+        resp = requests.post(
+            f"{api_url}/api/v1/results",
+            json=result_data,
+            headers=headers,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        click.echo()
+        click.secho(f"   ✅ Submitted! Score: {data['quality_score']:.0f}", fg="green", bold=True)
+        click.echo(f"   View: {api_url}/api/v1/leaderboard")
+    except requests.exceptions.ConnectionError:
+        click.secho("   ❌ Cannot connect to API. Is the server running?", fg="red")
+        click.echo(f"      URL: {api_url}")
+        sys.exit(1)
+    except requests.exceptions.HTTPError as e:
+        click.secho(f"   ❌ API error: {e.response.status_code}", fg="red")
+        click.echo(f"      {e.response.text}")
+        sys.exit(1)
+
+
+@cli.command()
+@click.option("--api-url", default="http://localhost:8000", help="Leaderboard API URL")
+@click.option("--issue", "-i", help="Filter by issue ID")
+@click.option("--tool", "-t", help="Filter by tool name")
+def leaderboard(api_url, issue, tool):
+    """View current leaderboard rankings."""
+    click.secho("📊 QualBench Leaderboard", bold=True)
+
+    params = {}
+    if issue:
+        params["issue"] = issue
+    if tool:
+        params["tool"] = tool
+
+    try:
+        resp = requests.get(
+            f"{api_url}/api/v1/leaderboard",
+            params=params,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        click.echo()
+        click.echo("   By Quality Score:")
+        for i, entry in enumerate(data["by_quality"][:10], 1):
+            icon = "✔" if entry["verdict"] == "ready_to_merge" else "⚠" if entry["verdict"] == "needs_review" else "❌"
+            click.echo(f"      {i}. {entry['tool']}: {entry['quality_score']:.0f} {icon}")
+
+        click.echo()
+        click.echo("   By Cost Efficiency:")
+        for i, entry in enumerate(data["by_cost_efficiency"][:10], 1):
+            cost_eff = entry["cost_usd"] / max(entry["quality_score"] / 100, 0.01)
+            click.echo(f"      {i}. {entry['tool']}: ${cost_eff:.2f}/point")
+
+    except requests.exceptions.ConnectionError:
+        click.secho("   ❌ Cannot connect to API", fg="red")
+        sys.exit(1)
 
 
 def main():

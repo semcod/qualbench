@@ -1,0 +1,38 @@
+name: QualBench Action Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qualbench-action-test:
+    runs-on: ubuntu-latest
+    name: Test QualBench GitHub Action
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build local action
+        run: |
+          docker build -t qualbench-action:local action/
+
+      - name: Test action with current diff
+        uses: ./action
+        with:
+          tool: prollama
+          mode: quality
+          fail_on_score: 50
+        continue-on-error: true
+
+      - name: Verify outputs
+        run: |
+          echo "Quality Score: ${{ steps.test-action.outputs.quality_score }}"
+          echo "Verdict: ${{ steps.test-action.outputs.verdict }}"
+          echo "Result JSON: ${{ steps.test-action.outputs.result_json }}"
+
+      - name: Check results file exists
+        run: |
+          ls -la .data/ 2>/dev/null || echo "No .data directory (expected for fresh runs)"

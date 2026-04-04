@@ -27,10 +27,14 @@ dependencies = [
     "bandit>=1.7",
     "ruff>=0.4",
     "GitPython>=3.1",
+    "fastapi>=0.100",
+    "requests>=2.31",
+    "uvicorn>=0.23",
+    "pydantic>=2.0",
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8.0", "pytest-cov>=5.0"]
+test = ["pytest>=8.0", "pytest-cov>=5.0", "httpx>=0.25"]
 all = ["qualbench[test]"]
 
 [project.scripts]
@@ -38,8 +42,8 @@ qualbench = "qualbench.cli:main"
 
 [project.urls]
 Homepage = "https://qualbench.com"
-Repository = "https://github.com/softreck/qualbench"
-Documentation = "https://github.com/softreck/qualbench/tree/main/docs"
+Repository = "https://github.com/semcod/qualbench"
+Documentation = "https://github.com/semcod/qualbench/tree/main/docs"
 
 [tool.hatch.build.targets.wheel]
 packages = ["qualbench"]

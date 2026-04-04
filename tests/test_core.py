@@ -2,6 +2,7 @@
 
 import json
 import pytest
+from click.testing import CliRunner
 
 from qualbench.dataset import Dataset, Issue
 from qualbench.benchmark import (
@@ -12,6 +13,7 @@ from qualbench.benchmark import (
     _score_cost,
     _compute_verdict,
 )
+from qualbench.cli import cli
 
 
 class TestQualBenchResult:
@@ -155,3 +157,107 @@ class TestDataset:
     def test_load_not_found(self):
         with pytest.raises(FileNotFoundError):
             Dataset.load("/nonexistent.json")
+
+    def test_load_v1_dataset(self):
+        """Test loading dataset v1 with TypeScript issues."""
+        ds = Dataset.load("dataset/qualbench-v1.json")
+        assert len(ds) == 50
+        summary = ds.summary()
+        assert summary["version"] == "1.0.0"
+        assert "languages" in summary
+        assert summary["languages"]["python"] == 35
+        assert summary["languages"]["typescript"] == 15
+
+    def test_filter_by_language(self):
+        """Test filtering issues by language (v1 feature)."""
+        ds = Dataset.load("dataset/qualbench-v1.json")
+        ts_issues = [i for i in ds.issues if i.quality_gates.language == "typescript"]
+        py_issues = [i for i in ds.issues if i.quality_gates.language == "python"]
+        assert len(ts_issues) == 15
+        assert len(py_issues) == 35
+
+
+class TestCLI:
+    """Tests for CLI commands: run, quickstart, compare, info, doctor."""
+
+    @pytest.fixture
+    def runner(self):
+        return CliRunner()
+
+    def test_cli_version(self, runner):
+        result = runner.invoke(cli, ["--version"])
+        assert result.exit_code == 0
+        assert "0.2" in result.output or "qualbench" in result.output.lower()
+
+    def test_run_json_output(self, runner):
+        """Test that run --json produces valid portable schema."""
+        result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--cwd", "/tmp"])
+        assert result.exit_code == 0
+        parsed = json.loads(result.output)
+        assert "quality_score" in parsed
+        assert "dimensions" in parsed
+        assert "verdict" in parsed
+
+    def test_run_fail_on_score_pass(self, runner):
+        """Test fail_on_score when score is above threshold."""
+        result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "0", "--cwd", "/tmp"])
+        # Should pass (exit 0) because any score >= 0
+        assert result.exit_code == 0
+
+    def test_run_fail_on_score_fail(self, runner):
+        """Test fail_on_score when score would be below threshold."""
+        result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "100", "--cwd", "/tmp"])
+        # Should fail (exit 1) because no real repo can score 100 with /tmp
+        assert result.exit_code == 1
+
+    def test_quickstart_command(self, runner):
+        """Test quickstart shows report and next steps."""
+        result = runner.invoke(cli, ["quickstart", "--tool", "test"])
+        assert result.exit_code == 0
+        assert "QualBench" in result.output
+        assert "Next steps" in result.output or "quickstart" in result.output.lower()
+
+    def test_compare_command(self, runner):
+        """Test compare command runs and shows score."""
+        result = runner.invoke(cli, ["compare", "my-tool", "--issue", "QB-001"])
+        assert result.exit_code == 0
+        assert "Comparing" in result.output or "score" in result.output.lower()
+
+    def test_info_command_builtin(self, runner):
+        """Test info shows built-in summary when dataset not found."""
+        result = runner.invoke(cli, ["info", "--dataset", "/nonexistent/path.json"])
+        assert result.exit_code == 0
+        assert "QualBench" in result.output
+
+    def test_doctor_command(self, runner):
+        """Test doctor checks system tools and Python modules."""
+        result = runner.invoke(cli, ["doctor"])
+        assert result.exit_code == 0
+        # Should report on tools - either OK or MISSING
+        assert "python" in result.output.lower() or "git" in result.output.lower()
+
+
+class TestActionIntegration:
+    """Tests for GitHub Action integration points."""
+
+    def test_action_output_schema(self):
+        """Verify action can parse runner JSON output."""
+        runner = QualBenchRunner(tool="action-test", cwd="/tmp")
+        result = runner.run("TEST-ACTION")
+        json_str = result.to_json()
+        parsed = json.loads(json_str)
+
+        # Action expects these fields in GITHUB_OUTPUT
+        assert "quality_score" in parsed
+        assert "verdict" in parsed
+        assert isinstance(parsed["quality_score"], (int, float))
+        assert parsed["verdict"] in ("ready_to_merge", "needs_review", "not_merge_ready")
+
+    def test_verdict_thresholds_match_action(self):
+        """Verdict thresholds must match action/fail_on_score logic."""
+        assert _compute_verdict(85) == "ready_to_merge"
+        assert _compute_verdict(65) == "needs_review"
+        assert _compute_verdict(64) == "not_merge_ready"
+        # Boundary check
+        assert _compute_verdict(84) == "needs_review"
+        assert _compute_verdict(86) == "ready_to_merge"

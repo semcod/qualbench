@@ -1,0 +1,109 @@
+# qualbench | 19f 1825L | shell:2,python:17 | 2026-04-04
+# stats: 69 func | 0 cls | 19 mod | CC̄=3.9 | critical:1 | cycles:0
+# alerts[5]: CC score_tool=19; fan-out main=19; fan-out main=16; fan-out QualBenchRunner.run=14; fan-out evaluate_tool=14
+# hotspots[5]: main fan=19; main fan=16; QualBenchRunner.run fan=14; evaluate_tool fan=14; main fan=13
+# evolution: CC̄ 3.2→3.9 (regressed +0.7)
+# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
+M[19]:
+  action/entrypoint.sh,50
+  project.sh,35
+  qualbench/__init__.py,10
+  qualbench/benchmark/__init__.py,224
+  qualbench/cli.py,200
+  qualbench/dataset.py,104
+  qualbench/evaluation/__init__.py,180
+  qualbench/runners/__init__.py,81
+  qualbench/utils/__init__.py,0
+  qualbench/utils/repos.py,100
+  runners/__init__.py,0
+  runners/copilot_runner.py,43
+  runners/openhands_runner.py,44
+  runners/prollama_runner.py,67
+  runners/template.py,156
+  scripts/__init__.py,0
+  scripts/evaluate.py,242
+  scripts/score.py,260
+  server.py,29
+D:
+  scripts/score.py:
+    e: score_iterations,score_cost,compute_mergeability,load_human_reviews,score_tool,generate_leaderboard,main
+    score_iterations(iterations;resolved)
+    score_cost(cost_usd;resolved)
+    compute_mergeability(scores)
+    load_human_reviews(reviews_dir)
+    score_tool(tool_name;evaluations;human_reviews)
+    generate_leaderboard(scores)
+    main()
+  qualbench/benchmark/__init__.py:
+    e: QualBenchResult,QualBenchRunner,_run,_score_iterations,_score_cost,_compute_verdict
+    QualBenchResult: to_dict(0),to_json(1),from_dict(1)  # Portable result schema — used in CLI, API, GitHub Action, le...
+    QualBenchRunner: __init__(3),run(1),_get_git_diff(0),_run_tests(0),_run_bandit(0),_run_quality(0),_estimate_mergeability(2),_estimate_cost(0),_extract_issues(3)  # Run QualBench on current repository diff...
+    _run(cmd;cwd;timeout)
+    _score_iterations(iterations;resolved)
+    _score_cost(cost;resolved)
+    _compute_verdict(score)
+  scripts/evaluate.py:
+    e: run_cmd,evaluate_correctness,evaluate_security,evaluate_quality,evaluate_tool,main
+    run_cmd(cmd;cwd;timeout)
+    evaluate_correctness(patch_path;repo_path;issue)
+    evaluate_security(repo_path;baseline_bandit)
+    evaluate_quality(repo_path;baseline_cc;patch_lines)
+    evaluate_tool(tool_dir;dataset)
+    main()
+  qualbench/evaluation/__init__.py:
+    e: CorrectnessResult,SecurityResult,QualityResult,EvaluationResult,_run,evaluate_correctness,evaluate_security,evaluate_quality,evaluate_patch
+    CorrectnessResult:
+    SecurityResult:
+    QualityResult:
+    EvaluationResult: to_dict(0)
+    _run(cmd;cwd;timeout)
+    evaluate_correctness(patch;repo_path)
+    evaluate_security(repo_path;baseline_count)
+    evaluate_quality(repo_path;baseline_cc;patch_lines)
+    evaluate_patch(issue_id;patch;repo_path;baseline_cc;baseline_bandit;cost_usd;time_seconds;iterations)
+  qualbench/cli.py:
+    e: _print_report,cli,run,quickstart,compare,info,doctor,main
+    _print_report(result)
+    cli()
+    run(tool;mode;issue;use_json;cwd;fail_on_score)
+    quickstart(tool)
+    compare(tool;issue)
+    info(dataset)
+    doctor()
+    main()
+  runners/template.py:
+    e: run,main
+    run(issue;repo_path;timeout)
+    main()
+  qualbench/utils/repos.py:
+    e: clone_repo,collect_baseline,setup_repos
+    clone_repo(repo;target;commit)
+    collect_baseline(repo_path)
+    setup_repos(dataset;output_dir)
+  runners/prollama_runner.py:
+    e: Runner
+    Runner(BaseRunner): setup(0),run(3)
+  runners/openhands_runner.py:
+    e: Runner
+    Runner(BaseRunner): setup(0),run(3)
+  qualbench/dataset.py:
+    e: QualityGates,Issue,Dataset
+    QualityGates:
+    Issue: from_dict(1)
+    Dataset: load(1),filter_by_difficulty(1),filter_by_ids(1),__len__(0),summary(0)
+  server.py:
+    e: Handler
+    Handler(http.server.SimpleHTTPRequestHandler): end_headers(0),do_GET(0)
+  runners/copilot_runner.py:
+    e: Runner
+    Runner(BaseRunner): setup(0),run(3)
+  qualbench/runners/__init__.py:
+    e: RunResult,BaseRunner
+    RunResult: to_dict(0)
+    BaseRunner(ABC): run(3),setup(0),teardown(0),reset_repo(1),get_diff(1),run_timed(3)  # Base class for QualBench tool runners...
+  project.sh:
+  qualbench/__init__.py:
+  qualbench/utils/__init__.py:
+  scripts/__init__.py:
+  action/entrypoint.sh:
+  runners/__init__.py:

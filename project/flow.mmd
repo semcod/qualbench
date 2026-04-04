@@ -1,0 +1,36 @@
+flowchart TD
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph CLI
+        qualbench__cli___print_report["_print_report"]
+        qualbench__cli__cli["cli"]
+        qualbench__cli__run["run"]
+        qualbench__cli__quickstart["quickstart"]
+        qualbench__cli__compare["compare"]
+        qualbench__cli__info["info"]
+        qualbench__cli__doctor["doctor"]
+        qualbench__cli__main["main"]
+    end
+
+    subgraph Core
+        qualbench__utils__repos__setup_repos["setup_repos"]
+        server__Handler__end_headers["end_headers"]
+        server__Handler__do_GET["do_GET"]
+        qualbench__benchmark__QualBenchResult__to_dict["to_dict"]
+        qualbench__benchmark__QualBenchResult__to_json["to_json"]
+        qualbench__benchmark__QualBenchResult__from_dict["from_dict"]
+        qualbench__benchmark__QualBenchRunner__run["run"]
+        qualbench__benchmark__QualBenchRunner___get_git_diff["_get_git_diff"]
+        qualbench__benchmark__QualBenchRunner___run_tests["_run_tests"]
+        qualbench__benchmark__QualBenchRunner___run_bandit["_run_bandit"]
+        qualbench__benchmark__QualBenchRunner___run_quality["_run_quality"]
+        qualbench__benchmark__QualBenchRunner___estimate_mergeability["_estimate_mergeability"]
+        qualbench__benchmark__QualBenchRunner___estimate_cost["_estimate_cost"]
+        qualbench__benchmark__QualBenchRunner___extract_issues["_extract_issues"]
+        qualbench__evaluation__EvaluationResult__to_dict["to_dict"]
+        ...["+22 more"]
+    end
+
+    class qualbench__cli___print_report,qualbench__cli__cli,qualbench__cli__run,qualbench__cli__quickstart,qualbench__cli__compare,qualbench__cli__info,qualbench__cli__doctor,qualbench__cli__main,qualbench__utils__repos__setup_repos,server__Handler__end_headers entry

@@ -61,7 +61,8 @@ footer a:hover{color:var(--ink)}
 <div class="links">
 <a href="#ci">CI Setup</a>
 <a href="#dimensions">Dimensions</a>
-<a href="https://github.com/softreck/qualbench">GitHub</a>
+<a href="#leaderboard">Leaderboard</a>
+<a href="https://github.com/semcod/qualbench">GitHub</a>
 </div>
 </div></nav>
 
@@ -70,7 +71,7 @@ footer a:hover{color:var(--ink)}
 <h1>eslint + code review, <em>but for AI.</em></h1>
 <p class="subtitle">Every AI-generated PR scored on production readiness. Not just "do tests pass" — "would you merge it?" Add to your pipeline in 2 minutes.</p>
 <div style="display:flex;gap:1rem;flex-wrap:wrap">
-<a href="https://github.com/softreck/qualbench" class="btn btn-primary">Add to CI</a>
+<a href="https://github.com/semcod/qualbench" class="btn btn-primary">Add to CI</a>
 <a href="#dimensions" class="btn btn-ghost">How it works</a>
 </div>
 </div></section>
@@ -87,7 +88,7 @@ footer a:hover{color:var(--ink)}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: softreck/qualbench-action@v1
+      - uses: semcod/qualbench-action@v1
         with:
           tool: prollama
           <span class="flg">fail_on_score: 70</span></pre>
@@ -129,6 +130,28 @@ footer a:hover{color:var(--ink)}
 </div>
 </div></section>
 
+<section id="leaderboard"><div class="container">
+<div class="section-label">Live results</div>
+<h2>Leaderboard</h2>
+<p class="desc">Real-time rankings by quality score and cost efficiency. <a href="#" onclick="loadLeaderboard(); return false;">Refresh</a></p>
+
+<div id="leaderboard-loading" style="color:var(--mid);font-size:.9rem">Loading...</div>
+<div id="leaderboard-error" style="color:var(--accent);display:none">Unable to load leaderboard. API server may be offline.</div>
+
+<div id="leaderboard-content" style="display:none">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1.5rem">
+<div>
+<h3 style="font-family:var(--mono);font-size:.8rem;margin-bottom:1rem">By Quality Score</h3>
+<div id="by-quality" class="lb-list"></div>
+</div>
+<div>
+<h3 style="font-family:var(--mono);font-size:.8rem;margin-bottom:1rem">By Cost Efficiency</h3>
+<div id="by-cost" class="lb-list"></div>
+</div>
+</div>
+</div>
+</div></section>
+
 <section><div class="container">
 <div class="section-label">Open standard</div>
 <h2>One format everywhere</h2>
@@ -139,11 +162,78 @@ footer a:hover{color:var(--ink)}
   <span class="cmd">"dimensions"</span>: { ... },
   <span class="cmd">"top_issues"</span>: [<span class="flg">"complexity_increase"</span>]
 }</pre>
-<a href="https://github.com/softreck/qualbench/blob/main/docs/schema.md" class="btn btn-ghost">Schema docs</a>
+<a href="https://github.com/semcod/qualbench/blob/main/docs/schema.md" class="btn btn-ghost">Schema docs</a>
 </div></section>
 
+<style>
+.lb-list{font-family:var(--mono);font-size:.85rem}
+.lb-item{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.lb-rank{color:var(--mid);width:2rem}
+.lb-tool{font-weight:500}
+.lb-score{font-family:var(--mono)}
+.lb-verdict{font-size:.75rem;margin-left:.5rem}
+.verdict-ready{color:var(--green)}
+.verdict-review{color:#b07020}
+.verdict-fail{color:var(--accent)}
+</style>
+
+<script>
+const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://api.qualbench.com';
+
+async function loadLeaderboard() {
+  const loading = document.getElementById('leaderboard-loading');
+  const error = document.getElementById('leaderboard-error');
+  const content = document.getElementById('leaderboard-content');
+  const byQuality = document.getElementById('by-quality');
+  const byCost = document.getElementById('by-cost');
+
+  loading.style.display = 'block';
+  error.style.display = 'none';
+  content.style.display = 'none';
+
+  try {
+    const resp = await fetch(`${API_URL}/api/v1/leaderboard`, {timeout: 5000});
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    // Render quality ranking
+    byQuality.innerHTML = data.by_quality.slice(0, 10).map((e, i) => {
+      const vClass = e.verdict === 'ready_to_merge' ? 'verdict-ready' :
+                     e.verdict === 'needs_review' ? 'verdict-review' : 'verdict-fail';
+      const vIcon = e.verdict === 'ready_to_merge' ? '✔' : e.verdict === 'needs_review' ? '⚠' : '❌';
+      return `<div class="lb-item">
+        <span><span class="lb-rank">${i+1}.</span><span class="lb-tool">${e.tool}</span> <span class="lb-verdict ${vClass}">${vIcon}</span></span>
+        <span class="lb-score">${Math.round(e.quality_score)}</span>
+      </div>`;
+    }).join('') || '<div style="color:var(--mid)">No results yet</div>';
+
+    // Render cost efficiency ranking
+    byCost.innerHTML = data.by_cost_efficiency.slice(0, 10).map((e, i) => {
+      const costEff = e.verdict === 'not_merge_ready' ? '∞' :
+                      `$${(e.cost_usd / Math.max(e.quality_score/100, 0.01)).toFixed(2)}/pt`;
+      return `<div class="lb-item">
+        <span><span class="lb-rank">${i+1}.</span><span class="lb-tool">${e.tool}</span></span>
+        <span class="lb-score">${costEff}</span>
+      </div>`;
+    }).join('') || '<div style="color:var(--mid)">No results yet</div>';
+
+    loading.style.display = 'none';
+    content.style.display = 'block';
+  } catch (err) {
+    loading.style.display = 'none';
+    error.style.display = 'block';
+    console.error('Leaderboard load failed:', err);
+  }
+}
+
+// Auto-load on page load
+if (document.getElementById('leaderboard')) {
+  loadLeaderboard();
+}
+</script>
+
 <footer><div class="container">
-<div><span style="font-family:var(--mono);font-weight:500">qualbench</span> &middot; Apache 2.0 &middot; <a href="https://github.com/softreck/qualbench">GitHub</a></div>
+<div><span style="font-family:var(--mono);font-weight:500">qualbench</span> &middot; Apache 2.0 &middot; <a href="https://github.com/semcod/qualbench">GitHub</a></div>
 <div>Built by <a href="https://softreck.com" style="font-weight:500">Softreck</a> &middot; Powered by <a href="https://github.com/semcod/pyqual" style="font-weight:500">pyqual</a></div>
 </div></footer>
 </body>

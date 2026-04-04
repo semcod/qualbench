@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: softreck/qualbench-action@v1
+      - uses: semcod/qualbench-action@v1
         with:
           tool: prollama
           fail_on_score: 70
@@ -59,6 +59,87 @@ Quality Score: 78/100
   ✔ Tests pass, no regressions
 
 Verdict: needs_review
+```
+
+## CI/CD Examples
+
+### GitHub Action (recommended)
+
+```yaml
+# .github/workflows/qualbench.yml
+name: QualBench
+on: [pull_request]
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: semcod/qualbench-action@v1
+        with:
+          tool: prollama
+          fail_on_score: 70
+```
+
+### GitLab CI
+
+```yaml
+# .gitlab-ci.yml
+qualbench:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - pip install qualbench
+  script:
+    - qualbench run --tool prollama --json --fail-on-score 70
+  only:
+    - merge_requests
+```
+
+### Azure DevOps
+
+```yaml
+# azure-pipelines.yml
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.12'
+  - script: |
+      pip install qualbench
+      qualbench run --tool prollama --json --fail-on-score 70
+    displayName: 'QualBench Quality Check'
+```
+
+### Jenkins
+
+```groovy
+// Jenkinsfile
+stage('Quality Check') {
+    steps {
+        sh '''
+            pip install qualbench
+            qualbench run --tool prollama --fail-on-score 70
+        '''
+    }
+}
+```
+
+### CircleCI
+
+```yaml
+# .circleci/config.yml
+version: 2.1
+jobs:
+  quality:
+    docker:
+      - image: python:3.12-slim
+    steps:
+      - checkout
+      - run: pip install qualbench
+      - run: qualbench run --tool prollama --fail-on-score 70
+workflows:
+  quality-check:
+    jobs:
+      - quality
 ```
 
 ## The problem
