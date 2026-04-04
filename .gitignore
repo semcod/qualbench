@@ -1,0 +1,11 @@
+.env.example
+repos/
+results/
+*.pyc
+__pycache__/
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

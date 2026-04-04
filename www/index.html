@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QualBench — CI for AI-Generated Code</title>
+<meta name="description" content="eslint + code review, but for AI. Score every AI-generated PR on production readiness. Add to your pipeline in 2 minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#0a0a0a;--paper:#f5f2ed;--mid:#8a8680;--accent:#c03020;--green:#1a7a4a;--mono:'JetBrains Mono',monospace;--serif:'Newsreader',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif}
+html{font-size:17px;scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased}
+.container{max-width:860px;margin:0 auto;padding:0 2rem}
+nav{padding:1.5rem 0;border-bottom:1px solid rgba(0,0,0,.08)}
+nav .container{display:flex;justify-content:space-between;align-items:center}
+nav .logo{font-family:var(--mono);font-weight:700;font-size:1.1rem;text-decoration:none;color:var(--ink);letter-spacing:-.02em}
+nav .logo span{color:var(--accent)}
+nav .links{display:flex;gap:1.5rem;font-size:.85rem}
+nav .links a{color:var(--mid);text-decoration:none;transition:color .2s}
+nav .links a:hover{color:var(--ink)}
+.hero{padding:5rem 0 4rem}
+.hero .overline{font-family:var(--mono);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;font-weight:500}
+.hero h1{font-family:var(--serif);font-size:clamp(2.2rem,5.5vw,3.5rem);font-weight:600;line-height:1.15;letter-spacing:-.03em;max-width:700px;margin-bottom:1.5rem}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero .subtitle{font-size:1.15rem;color:var(--mid);max-width:560px;line-height:1.6;margin-bottom:2.5rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;font-size:.9rem;font-weight:500;text-decoration:none;border-radius:4px;transition:all .15s}
+.btn-primary{background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
+.btn-primary:hover{background:#222}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid rgba(0,0,0,.2)}
+.btn-ghost:hover{border-color:var(--ink)}
+section{padding:4rem 0;border-top:1px solid rgba(0,0,0,.08)}
+.section-label{font-family:var(--mono);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);margin-bottom:1rem;font-weight:500}
+h2{font-family:var(--serif);font-size:1.6rem;margin-bottom:.8rem;font-weight:600;letter-spacing:-.02em}
+.desc{color:var(--mid);margin-bottom:2rem;max-width:560px}
+pre{background:#1a1a1a;color:#e0ddd8;padding:1.5rem;border-radius:6px;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.7;margin-bottom:1.5rem}
+pre .cmt{color:#6a6a6a}pre .cmd{color:#e8c87a}pre .flg{color:#7ab8e0}
+.dim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem}
+.dim-card{padding:1.5rem;border:1px solid rgba(0,0,0,.08);border-radius:6px;background:#fff;transition:border-color .2s}
+.dim-card:hover{border-color:rgba(0,0,0,.2)}
+.dim-weight{font-family:var(--mono);font-size:.7rem;color:var(--accent);margin-bottom:.3rem;font-weight:500}
+.dim-name{font-weight:600;font-size:1rem;margin-bottom:.4rem}
+.dim-desc{font-size:.85rem;color:var(--mid);line-height:1.55}
+.pr-preview{background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:1.5rem;font-family:var(--mono);font-size:.82rem;line-height:1.8;max-width:520px}
+.pr-preview .title{font-weight:700;margin-bottom:.8rem;font-size:.9rem}
+.pr-pass{color:var(--green)}
+.pr-warn{color:#b07020}
+.pr-fail{color:var(--accent)}
+.pr-verdict{margin-top:.8rem;font-weight:700;font-size:.9rem}
+footer{padding:3rem 0;border-top:1px solid rgba(0,0,0,.08);font-size:.82rem;color:var(--mid)}
+footer .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+footer a{color:var(--mid);text-decoration:none}
+footer a:hover{color:var(--ink)}
+@media(max-width:640px){.container{padding:0 1.2rem}.hero{padding:3rem 0 2.5rem}.dim-grid{grid-template-columns:1fr}footer .container{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<nav><div class="container">
+<a href="/" class="logo">qual<span>bench</span></a>
+<div class="links">
+<a href="#ci">CI Setup</a>
+<a href="#dimensions">Dimensions</a>
+<a href="https://github.com/softreck/qualbench">GitHub</a>
+</div>
+</div></nav>
+
+<section class="hero"><div class="container">
+<div class="overline">CI for AI-generated code &middot; Apache 2.0</div>
+<h1>eslint + code review, <em>but for AI.</em></h1>
+<p class="subtitle">Every AI-generated PR scored on production readiness. Not just "do tests pass" — "would you merge it?" Add to your pipeline in 2 minutes.</p>
+<div style="display:flex;gap:1rem;flex-wrap:wrap">
+<a href="https://github.com/softreck/qualbench" class="btn btn-primary">Add to CI</a>
+<a href="#dimensions" class="btn btn-ghost">How it works</a>
+</div>
+</div></section>
+
+<section id="ci"><div class="container">
+<div class="section-label">Setup</div>
+<h2>2 minutes to quality-gated PRs</h2>
+<p class="desc">Add QualBench to your GitHub Actions. Every AI-generated PR gets scored and reviewed automatically.</p>
+<pre><span class="cmt"># .github/workflows/qualbench.yml</span>
+<span class="cmd">name:</span> QualBench
+<span class="cmd">on:</span> [pull_request]
+<span class="cmd">jobs:</span>
+  quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: softreck/qualbench-action@v1
+        with:
+          tool: prollama
+          <span class="flg">fail_on_score: 70</span></pre>
+<div class="pr-preview">
+<div class="title">🧠 QualBench Review</div>
+<div>Quality Score: <strong>78/100</strong></div>
+<br>
+<div class="pr-fail">&nbsp;&nbsp;❌ Complexity increased (+12%)</div>
+<div class="pr-warn">&nbsp;&nbsp;⚠ Security: 1 new finding</div>
+<div class="pr-pass">&nbsp;&nbsp;✔ Tests pass, no regressions</div>
+<div class="pr-verdict">Verdict: needs_review</div>
+</div>
+</div></section>
+
+<section><div class="container">
+<div class="section-label">Or use the CLI</div>
+<h2>60 seconds to your first score</h2>
+<pre><span class="cmt"># Install and run</span>
+<span class="cmd">pip install</span> qualbench
+<span class="cmd">qualbench</span> quickstart
+
+<span class="cmt"># Score current diff</span>
+<span class="cmd">qualbench</span> run <span class="flg">--tool prollama</span>
+
+<span class="cmt"># Machine-readable output</span>
+<span class="cmd">qualbench</span> run <span class="flg">--json</span></pre>
+</div></section>
+
+<section id="dimensions"><div class="container">
+<div class="section-label">Evaluation</div>
+<h2>Six dimensions of production readiness</h2>
+<div class="dim-grid">
+<div class="dim-card"><div class="dim-weight">25%</div><div class="dim-name">Correctness</div><div class="dim-desc">Tests pass. No regressions. Verified via pytest.</div></div>
+<div class="dim-card"><div class="dim-weight">25%</div><div class="dim-name">Mergeability</div><div class="dim-desc">Would a senior dev approve? Blind review, 1–5 scale.</div></div>
+<div class="dim-card"><div class="dim-weight">15%</div><div class="dim-name">Security</div><div class="dim-desc">No new vulnerabilities. Bandit delta scoring.</div></div>
+<div class="dim-card"><div class="dim-weight">15%</div><div class="dim-name">Code quality</div><div class="dim-desc">Complexity should not increase. No dead code.</div></div>
+<div class="dim-card"><div class="dim-weight">10%</div><div class="dim-name">Iterations</div><div class="dim-desc">Fewer attempts to converge = better engineering.</div></div>
+<div class="dim-card"><div class="dim-weight">10%</div><div class="dim-name">Cost efficiency</div><div class="dim-desc">USD per successful patch. The metric CFOs care about.</div></div>
+</div>
+</div></section>
+
+<section><div class="container">
+<div class="section-label">Open standard</div>
+<h2>One format everywhere</h2>
+<p class="desc">CLI, API, GitHub Action — same portable JSON schema. No translation, no surprises.</p>
+<pre>{
+  <span class="cmd">"quality_score"</span>: 78,
+  <span class="cmd">"verdict"</span>: <span class="flg">"needs_review"</span>,
+  <span class="cmd">"dimensions"</span>: { ... },
+  <span class="cmd">"top_issues"</span>: [<span class="flg">"complexity_increase"</span>]
+}</pre>
+<a href="https://github.com/softreck/qualbench/blob/main/docs/schema.md" class="btn btn-ghost">Schema docs</a>
+</div></section>
+
+<footer><div class="container">
+<div><span style="font-family:var(--mono);font-weight:500">qualbench</span> &middot; Apache 2.0 &middot; <a href="https://github.com/softreck/qualbench">GitHub</a></div>
+<div>Built by <a href="https://softreck.com" style="font-weight:500">Softreck</a> &middot; Powered by <a href="https://github.com/semcod/pyqual" style="font-weight:500">pyqual</a></div>
+</div></footer>
+</body>
+</html>

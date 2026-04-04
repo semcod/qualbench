@@ -1,0 +1,26 @@
+{
+  "reviewer": "REVIEWER_NAME",
+  "date": "YYYY-MM-DD",
+  "instructions": "Review each patch diff WITHOUT knowing which tool generated it. Score 1-5 based on: would you merge this PR?",
+  "scale": {
+    "1": "Reject — fundamentally wrong approach",
+    "2": "Major rework — correct idea, poor execution, 3+ comments",
+    "3": "Minor fixes — acceptable approach, 2-3 comments needed",
+    "4": "Approve with nits — good code, 0-1 minor comments",
+    "5": "Ship it — merge immediately"
+  },
+  "reviews": [
+    {
+      "tool": "TOOL_A",
+      "issue_id": "QB-001",
+      "score": null,
+      "comments": ""
+    },
+    {
+      "tool": "TOOL_A",
+      "issue_id": "QB-002",
+      "score": null,
+      "comments": ""
+    }
+  ]
+}

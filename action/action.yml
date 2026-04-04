@@ -1,0 +1,41 @@
+name: "QualBench"
+description: "CI for AI-generated code. Score PRs on production readiness, not just correctness."
+author: "Softreck"
+
+branding:
+  icon: "check-circle"
+  color: "purple"
+
+inputs:
+  tool:
+    description: "AI tool name (prollama, aider, copilot, openhands)"
+    required: true
+    default: "prollama"
+  mode:
+    description: "Execution mode (cheap, quality, secure)"
+    required: false
+    default: "quality"
+  fail_on_score:
+    description: "Fail pipeline if quality score below this threshold"
+    required: false
+  issue:
+    description: "Specific issue ID (default: LOCAL for current diff)"
+    required: false
+    default: "LOCAL"
+
+outputs:
+  quality_score:
+    description: "Quality Score (0-100)"
+  verdict:
+    description: "Verdict: ready_to_merge, needs_review, not_merge_ready"
+  result_json:
+    description: "Full result in portable JSON schema"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  env:
+    QUALBENCH_TOOL: ${{ inputs.tool }}
+    QUALBENCH_MODE: ${{ inputs.mode }}
+    QUALBENCH_FAIL_ON_SCORE: ${{ inputs.fail_on_score }}
+    QUALBENCH_ISSUE: ${{ inputs.issue }}

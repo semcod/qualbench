@@ -1,0 +1,193 @@
+{
+  "version": "0.1.0",
+  "name": "QualBench-v0",
+  "description": "10 real-world issues measuring AI code production readiness",
+  "created": "2026-04-03",
+  "methodology": "docs/methodology.md",
+  "issues": [
+    {
+      "id": "QB-001",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "pallets/flask",
+      "version": "3.1.x",
+      "title": "Missing error handler for HTTP 405 Method Not Allowed",
+      "problem_statement": "When a route exists but the HTTP method is not allowed, Flask returns a generic 405 response without invoking any registered error handler. Users who register `@app.errorhandler(405)` expect their custom handler to be called, but it is bypassed when the MethodNotAllowed exception is raised by the routing layer. Expected: custom 405 handler is invoked. Actual: default werkzeug 405 response is returned.",
+      "expected_fix": "Ensure MethodNotAllowed exceptions from the router pass through the app's error handler dispatch.",
+      "evaluation": {
+        "tests_required": ["test_405_custom_handler", "test_405_default_still_works", "test_method_not_allowed_with_valid_methods"],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 30
+        }
+      }
+    },
+    {
+      "id": "QB-002",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "psf/requests",
+      "version": "2.32.x",
+      "title": "Incorrect encoding detection for responses with BOM",
+      "problem_statement": "When a server returns a response with a UTF-8 BOM (byte order mark) but does not declare charset in Content-Type header, requests falls back to apparent_encoding (chardet/charset_normalizer) which sometimes detects the encoding incorrectly as ascii or latin-1. The BOM should take precedence as an explicit encoding signal. Expected: UTF-8 BOM detected, response.text decoded as UTF-8. Actual: response.text decoded as latin-1, producing garbled text.",
+      "expected_fix": "Check for BOM bytes at the start of response content before falling back to apparent_encoding.",
+      "evaluation": {
+        "tests_required": ["test_bom_utf8_detection", "test_no_bom_fallback_unchanged", "test_bom_utf16_detection"],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 20
+        }
+      }
+    },
+    {
+      "id": "QB-003",
+      "difficulty": "simple",
+      "category": "bug_fix",
+      "repo": "tiangolo/fastapi",
+      "version": "0.115.x",
+      "title": "Missing validation for negative values in integer query parameter with ge=0",
+      "problem_statement": "When declaring a query parameter with `Query(ge=0)`, FastAPI should reject negative integer values with a 422 Validation Error. However, when the query parameter is passed as a string like `?page=-1`, the validation passes and the negative value is accepted. This only happens when the parameter type annotation uses `int` with `Query(ge=0)` — using `conint(ge=0)` works correctly. Expected: `GET /items?page=-1` returns 422. Actual: returns 200 with page=-1.",
+      "expected_fix": "Ensure Query parameter validators apply ge/le/gt/lt constraints consistently regardless of declaration style.",
+      "evaluation": {
+        "tests_required": ["test_negative_query_param_rejected", "test_zero_query_param_accepted", "test_positive_query_param_accepted"],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 25
+        }
+      }
+    },
+    {
+      "id": "QB-004",
+      "difficulty": "medium",
+      "category": "bug_fix",
+      "repo": "django/django",
+      "version": "5.1.x",
+      "title": "Template filter |escape inconsistency with mark_safe in nested blocks",
+      "problem_statement": "When using the `|escape` filter on a variable that was previously marked safe with `mark_safe()`, the filter should re-escape the content. However, inside nested `{% block %}` tags with template inheritance, the `|escape` filter is silently ignored for mark_safe'd content. This creates an inconsistency: the same expression `{{ var|escape }}` produces different results depending on whether it appears in a top-level template or inside an inherited block. Expected: `|escape` always escapes, regardless of block nesting depth. Actual: `|escape` is no-op inside nested inherited blocks for mark_safe content.",
+      "expected_fix": "Fix the template engine's escape filter to consistently apply escaping regardless of block inheritance context.",
+      "evaluation": {
+        "tests_required": ["test_escape_mark_safe_in_block", "test_escape_mark_safe_top_level", "test_autoescape_still_works", "test_nested_block_escape"],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 40
+        }
+      }
+    },
+    {
+      "id": "QB-005",
+      "difficulty": "medium",
+      "category": "bug_fix",
+      "repo": "encode/httpx",
+      "version": "0.28.x",
+      "title": "Connection pool timeout not respected when all connections are in use",
+      "problem_statement": "When using `httpx.AsyncClient` with `limits=httpx.Limits(max_connections=10)` and all 10 connections are in use, new requests should wait up to `pool_timeout` seconds for a connection to become available, then raise `PoolTimeout`. Instead, requests wait indefinitely — the pool_timeout parameter is ignored when the pool is full. Expected: `PoolTimeout` raised after `pool_timeout` seconds. Actual: request hangs forever.",
+      "expected_fix": "Implement timeout enforcement in the connection pool acquisition path.",
+      "evaluation": {
+        "tests_required": ["test_pool_timeout_fires", "test_pool_timeout_zero_immediate", "test_pool_connection_released_reused"],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 50
+        }
+      }
+    },
+    {
+      "id": "QB-006",
+      "difficulty": "medium",
+      "category": "feature",
+      "repo": "pydantic/pydantic",
+      "version": "2.10.x",
+      "title": "Recursive model serialization exceeds max depth without clear error",
+      "problem_statement": "When a Pydantic model has a self-referential field (e.g., `children: list['TreeNode']`), calling `.model_dump()` on a deeply nested instance causes a `RecursionError` with no indication of what went wrong or how to fix it. Expected: clear error message with the model name, field path, and current depth — or a configurable `max_depth` parameter on `model_dump()`. Actual: raw `RecursionError: maximum recursion depth exceeded`.",
+      "expected_fix": "Add max_depth parameter to model_dump() and model_dump_json() with a clear error when exceeded.",
+      "evaluation": {
+        "tests_required": ["test_recursive_dump_with_max_depth", "test_recursive_dump_error_message", "test_non_recursive_unaffected", "test_max_depth_json"],
+        "quality_gates": {
+          "cc_max": 12,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 60
+        }
+      }
+    },
+    {
+      "id": "QB-007",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "pallets/flask",
+      "version": "3.1.x",
+      "title": "Extract blueprint error handling logic into a dedicated module",
+      "problem_statement": "Flask's `app.py` contains error handling logic that is tightly coupled with blueprint registration, making it difficult to customize error handling per-blueprint. The error handling code (dispatching errors to handlers, looking up blueprint-specific handlers, falling back to app-level handlers) is spread across `Flask.handle_exception`, `Flask.handle_user_exception`, and parts of `Flask.full_dispatch_request`. Refactor: extract all error handling logic into a new `flask/error_handling.py` module with a clear `ErrorDispatcher` class. Preserve all existing behavior. No API changes.",
+      "expected_fix": "New module `flask/error_handling.py` with `ErrorDispatcher` class. All existing error handling tests must pass without modification.",
+      "evaluation": {
+        "tests_required": ["test_all_existing_error_tests_pass", "test_error_dispatcher_class_exists", "test_blueprint_error_isolation"],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_reduction_required": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 200
+        }
+      }
+    },
+    {
+      "id": "QB-008",
+      "difficulty": "hard",
+      "category": "refactor",
+      "repo": "encode/starlette",
+      "version": "0.41.x",
+      "title": "Reduce middleware chain cyclomatic complexity",
+      "problem_statement": "Starlette's middleware stack in `starlette/middleware/__init__.py` and the ASGI app wrapping logic in `starlette/applications.py` has grown to CC > 15 in the `build_middleware_stack` method. The nested conditionals handle different middleware types (pure ASGI, class-based, function-based) and error recovery. Refactor to bring CC below 10 while preserving all behavior. Key constraint: no changes to the public Middleware API.",
+      "expected_fix": "Refactor build_middleware_stack to use strategy pattern or similar. CC must drop below 10. All middleware tests pass.",
+      "evaluation": {
+        "tests_required": ["test_all_existing_middleware_tests_pass", "test_cc_below_threshold"],
+        "quality_gates": {
+          "cc_max": 10,
+          "cc_before_must_be_higher": true,
+          "no_new_bandit_issues": true,
+          "max_lines_changed": 150
+        }
+      }
+    },
+    {
+      "id": "QB-009",
+      "difficulty": "security",
+      "category": "vulnerability",
+      "repo": "tiangolo/fastapi",
+      "version": "0.115.x",
+      "title": "Path parameter injection in generated OpenAPI schema URL",
+      "problem_statement": "FastAPI's OpenAPI schema generation interpolates path parameters into example URLs without sanitization. A malicious path parameter value containing JavaScript or HTML (e.g., `<script>alert(1)</script>`) is rendered unsanitized in the Swagger UI example panel. This is a stored XSS via OpenAPI spec. Severity: Medium (requires crafted parameter value displayed in docs). Expected: all path parameter examples are HTML-escaped in the generated OpenAPI JSON. Actual: raw HTML/JS rendered in Swagger UI.",
+      "expected_fix": "Escape path parameter examples in OpenAPI schema generation. Add Content-Security-Policy headers to docs endpoints.",
+      "evaluation": {
+        "tests_required": ["test_path_param_xss_escaped", "test_openapi_schema_safe_output", "test_swagger_ui_csp_header"],
+        "quality_gates": {
+          "cc_max": 8,
+          "no_new_bandit_issues": true,
+          "must_fix_bandit_issue": true,
+          "max_lines_changed": 40
+        }
+      }
+    },
+    {
+      "id": "QB-010",
+      "difficulty": "security",
+      "category": "vulnerability",
+      "repo": "django/django",
+      "version": "5.1.x",
+      "title": "Reflected XSS in admin changelist filter parameter",
+      "problem_statement": "The Django admin changelist view reflects filter parameter names in the page HTML without proper escaping. A crafted URL like `/admin/app/model/?<script>alert(1)</script>=value` renders the script tag in the filter sidebar. This only affects authenticated admin users but can be exploited via CSRF or social engineering. Severity: Medium. Expected: all filter parameter names are escaped before rendering. Actual: raw HTML in filter sidebar.",
+      "expected_fix": "Escape filter parameter names in the admin changelist template and/or view. Add test for XSS in filter params.",
+      "evaluation": {
+        "tests_required": ["test_admin_filter_xss_escaped", "test_admin_filter_normal_still_works", "test_admin_filter_unicode_safe"],
+        "quality_gates": {
+          "cc_max": 10,
+          "no_new_bandit_issues": true,
+          "must_fix_bandit_issue": true,
+          "max_lines_changed": 30
+        }
+      }
+    }
+  ]
+}
