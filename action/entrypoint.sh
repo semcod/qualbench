@@ -18,7 +18,13 @@ echo "$RESULT" | jq '.'
 
 echo "quality_score=$SCORE" >> "$GITHUB_OUTPUT"
 echo "verdict=$VERDICT" >> "$GITHUB_OUTPUT"
-echo "result_json=$RESULT" >> "$GITHUB_OUTPUT"
+
+# Multiline JSON output using heredoc syntax
+{
+  echo "result_json<<QBJSON"
+  echo "$RESULT"
+  echo "QBJSON"
+} >> "$GITHUB_OUTPUT"
 
 if [ -n "$GITHUB_STEP_SUMMARY" ]; then
   CORRECTNESS=$(echo "$RESULT" | jq -r '.dimensions.correctness')
