@@ -92,7 +92,7 @@ def _print_report(result: QualBenchResult):
 
 @click.group()
 @click.version_option(__version__)
-def cli():
+def cli() -> None:
     """QualBench — CI for AI-generated code."""
     pass
 
@@ -104,7 +104,7 @@ def cli():
 @click.option("--json-output", "--json", "use_json", is_flag=True, help="Output portable JSON schema")
 @click.option("--cwd", default=".", help="Repository path")
 @click.option("--fail-on-score", type=int, default=None, help="Exit code 1 if score below this")
-def run(tool, mode, issue, use_json, cwd, fail_on_score):
+def run(tool, mode, issue, use_json, cwd, fail_on_score) -> None:
     """Score the current diff against quality gates."""
     runner = QualBenchRunner(tool=tool, mode=mode, cwd=cwd)
     result = runner.run(issue_id=issue)
@@ -124,7 +124,7 @@ def run(tool, mode, issue, use_json, cwd, fail_on_score):
 
 @cli.command()
 @click.option("--tool", "-t", default="prollama")
-def quickstart(tool):
+def quickstart(tool) -> None:
     """Run one issue, show your first score in 60 seconds."""
     click.secho("🚀 QualBench Quickstart", bold=True)
     click.echo(f"   Tool: {tool}")

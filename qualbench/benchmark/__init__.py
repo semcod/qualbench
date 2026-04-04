@@ -8,8 +8,14 @@ against quality gates, produces the portable QualBench result schema.
 import json
 import subprocess
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from typing import Optional
+
+# Constants
+DEFAULT_TIMEOUT = 120
+TEST_TIMEOUT = 300
+VERDICT_READY_THRESHOLD = 85
+VERDICT_REVIEW_THRESHOLD = 65
 
 
 @dataclass
@@ -53,7 +59,7 @@ WEIGHTS = {
 }
 
 
-def _run(cmd: list[str], cwd: str = None, timeout: int = 120) -> tuple[int, str, str]:
+def _run(cmd: list[str], cwd: str = None, timeout: int = DEFAULT_TIMEOUT) -> tuple[int, str, str]:
     try:
         r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
         return r.returncode, r.stdout, r.stderr
@@ -118,7 +124,7 @@ class QualBenchRunner:
 
     def _run_tests(self) -> float:
         rc, stdout, stderr = _run(
-            ["python", "-m", "pytest", "-q", "--tb=no"], cwd=self.cwd, timeout=300
+            ["python", "-m", "pytest", "-q", "--tb=no"], cwd=self.cwd, timeout=TEST_TIMEOUT
         )
         return 100.0 if rc == 0 else 0.0
 
@@ -217,8 +223,8 @@ def _score_cost(cost: float, resolved: bool) -> float:
 
 
 def _compute_verdict(score: float) -> str:
-    if score >= 85:
+    if score >= VERDICT_READY_THRESHOLD:
         return "ready_to_merge"
-    if score >= 65:
+    if score >= VERDICT_REVIEW_THRESHOLD:
         return "needs_review"
     return "not_merge_ready"
