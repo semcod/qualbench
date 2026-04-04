@@ -1,0 +1,75 @@
+name: QualBench
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    name: QualBench Quality Gate
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for diff analysis
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          pip install pytest bandit radon ruff
+      
+      - name: Run QualBench
+        uses: semcod/qualbench-action@v1
+        with:
+          tool: prollama
+          mode: quality
+          fail_on_score: 70
+        continue-on-error: true  # Don't block PRs during adoption
+        id: qualbench
+      
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const score = '${{ steps.qualbench.outputs.quality_score }}';
+            const verdict = '${{ steps.qualbench.outputs.verdict }}';
+            const result = JSON.parse(`${{ steps.qualbench.outputs.result_json }}`);
+            
+            const verdictEmoji = {
+              'ready_to_merge': '✅',
+              'needs_review': '⚠️',
+              'not_merge_ready': '❌'
+            }[verdict] || '❓';
+            
+            const body = `## ${verdictEmoji} QualBench Quality Report
+            
+            **Quality Score:** ${score}/100
+            
+            | Dimension | Score |
+            |-----------|-------|
+            | Correctness | ${result.dimensions?.correctness || 'N/A'} |
+            | Security | ${result.dimensions?.security || 'N/A'} |
+            | Quality | ${result.dimensions?.quality || 'N/A'} |
+            | Mergeability | ${result.dimensions?.mergeability || 'N/A'} |
+            
+            **Verdict:** \`${verdict}\`
+            
+            ${result.top_issues?.length > 0 ? `**Issues:** ${result.top_issues.join(', ')}` : ''}
+            
+            ---
+            *Powered by [QualBench](https://qualbench.com)*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
