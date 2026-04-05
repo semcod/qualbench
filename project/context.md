@@ -188,12 +188,12 @@ Main execution flows into the system:
 > Run with timing wrapper.
 - **Calls**: self.reset_repo, time.time, round, self.run, RunResult, time.time, str, time.time
 
+### qualbench.dataset.Dataset.summary
+- **Calls**: set, repos.add, len, sorted, difficulties.get, categories.get, languages.get
+
 ### qualbench.supervisor.SupervisorAI.solve
 > Solve an issue with intelligent routing.
 - **Calls**: print, print, result.get, self.route, RoutingDecision, self._parallel_execute, self._single_execute
-
-### qualbench.dataset.Dataset.summary
-- **Calls**: set, repos.add, len, sorted, difficulties.get, categories.get, languages.get
 
 ### runners.openhands_runner.Runner.run
 - **Calls**: time.time, subprocess.run, self.get_diff, RunResult, time.time, bool, os.environ.get
@@ -326,16 +326,16 @@ Features:
 - **Methods**: 1
 - **Key Methods**: qualbench.evaluation.EvaluationResult.to_dict
 
+### qualbench.dataset.QualityGates
+> Quality gates for v0 and v1 datasets.
+- **Methods**: 0
+
 ### qualbench.supervisor.RoutingDecision
 > Decision made by supervisor for an issue.
 - **Methods**: 0
 
 ### qualbench.supervisor.ParallelResult
 > Result from parallel execution.
-- **Methods**: 0
-
-### qualbench.dataset.QualityGates
-> Quality gates for v0 and v1 datasets.
 - **Methods**: 0
 
 ### qualbench.evaluation.CorrectnessResult
@@ -392,15 +392,15 @@ Functions exposed as public API (no underscore prefix):
 - `qualbench.utils.repos.setup_repos` - 11 calls
 - `scripts.generate_dataset_v1.generate_dataset_v1` - 11 calls
 - `runners.cline_runner.run_cline` - 11 calls
-- `qualbench.utils.repos.clone_repo` - 10 calls
 - `qualbench.dataset.Dataset.load` - 10 calls
+- `qualbench.utils.repos.clone_repo` - 10 calls
 - `qualbench.evaluation.evaluate_security` - 9 calls
 - `scripts.score.load_human_reviews` - 9 calls
 - `qualbench.runners.BaseRunner.run_timed` - 8 calls
 - `qualbench.evaluation.evaluate_correctness` - 8 calls
 - `scripts.evaluate.evaluate_security` - 8 calls
-- `qualbench.supervisor.SupervisorAI.solve` - 7 calls
 - `qualbench.dataset.Dataset.summary` - 7 calls
+- `qualbench.supervisor.SupervisorAI.solve` - 7 calls
 - `runners.openhands_runner.Runner.run` - 7 calls
 - `qualbench.supervisor.SupervisorAI.analyze_issue` - 6 calls
 - `qualbench.evaluation.evaluate_patch` - 6 calls

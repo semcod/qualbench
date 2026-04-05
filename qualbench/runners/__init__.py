@@ -9,6 +9,10 @@ from typing import Optional
 from qualbench.dataset import Issue
 
 
+# Constants
+DEFAULT_TIMEOUT = 900
+
+
 @dataclass
 class RunResult:
     issue_id: str
@@ -41,7 +45,7 @@ class BaseRunner(ABC):
     name: str = "unnamed"
 
     @abstractmethod
-    def run(self, issue: Issue, repo_path: str, timeout: int = 900) -> RunResult:
+    def run(self, issue: Issue, repo_path: str, timeout: int = DEFAULT_TIMEOUT) -> RunResult:
         """Run the tool on a single issue and return results."""
         ...
 
@@ -65,7 +69,7 @@ class BaseRunner(ABC):
         )
         return result.stdout
 
-    def run_timed(self, issue: Issue, repo_path: str, timeout: int = 900) -> RunResult:
+    def run_timed(self, issue: Issue, repo_path: str, timeout: int = DEFAULT_TIMEOUT) -> RunResult:
         """Run with timing wrapper."""
         self.reset_repo(repo_path)
         start = time.time()

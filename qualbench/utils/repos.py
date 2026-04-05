@@ -6,6 +6,11 @@ from pathlib import Path
 from qualbench.dataset import Dataset
 
 
+# Constants
+CLONE_DEPTH = 50
+ERROR_SNIPPET_LENGTH = 200
+
+
 REPO_URLS = {
     "pallets/flask": "https://github.com/pallets/flask.git",
     "psf/requests": "https://github.com/psf/requests.git",
@@ -30,11 +35,11 @@ def clone_repo(repo: str, target: Path, commit: str = None) -> bool:
 
     print(f"  Cloning {url}...")
     result = subprocess.run(
-        ["git", "clone", "--depth", "50", url, str(target)],
+        ["git", "clone", "--depth", str(CLONE_DEPTH), url, str(target)],
         capture_output=True, text=True,
     )
     if result.returncode != 0:
-        print(f"  ERROR: {result.stderr[:200]}")
+        print(f"  ERROR: {result.stderr[:ERROR_SNIPPET_LENGTH]}")
         return False
 
     if commit:
