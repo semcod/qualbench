@@ -147,7 +147,7 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 qualbench/
-├── project├── qualbench/    ├── cli├── server    ├── supervisor        ├── repos    ├── utils/    ├── dataset    ├── evaluation/    ├── runners/├── scripts/    ├── evaluate    ├── generate_dataset_v1    ├── entrypoint    ├── score    ├── cline_runner    ├── template    ├── copilot_runner├── runners/    ├── prollama_runner    ├── aider_runner    ├── openhands_runner    ├── benchmark/    ├── api```
+├── project├── qualbench/    ├── cli├── server    ├── supervisor    ├── dataset    ├── utils/        ├── repos    ├── runners/├── scripts/    ├── evaluate    ├── evaluation/    ├── score    ├── entrypoint    ├── generate_dataset_v1    ├── cline_runner    ├── template    ├── copilot_runner├── runners/    ├── prollama_runner    ├── aider_runner    ├── openhands_runner    ├── benchmark/    ├── api```
 
 ## API Overview
 
@@ -160,12 +160,12 @@ qualbench/
 - **`QualityGates`** — Quality gates for v0 and v1 datasets.
 - **`Issue`** — —
 - **`Dataset`** — —
+- **`RunResult`** — —
+- **`BaseRunner`** — Base class for QualBench tool runners.
 - **`CorrectnessResult`** — —
 - **`SecurityResult`** — —
 - **`QualityResult`** — —
 - **`EvaluationResult`** — —
-- **`RunResult`** — —
-- **`BaseRunner`** — Base class for QualBench tool runners.
 - **`Runner`** — —
 - **`Runner`** — —
 - **`Runner`** — —
@@ -190,17 +190,16 @@ qualbench/
 - `clone_repo(repo, target, commit)` — Clone a repository and optionally checkout a specific commit.
 - `collect_baseline(repo_path)` — Collect baseline metrics (CC, bandit count) for a repository.
 - `setup_repos(dataset, output_dir)` — Clone all repos needed for the dataset.
-- `evaluate_correctness(patch, repo_path)` — Apply patch and run tests.
-- `evaluate_security(repo_path, baseline_count)` — Run bandit and compute delta.
-- `evaluate_quality(repo_path, baseline_cc, patch_lines)` — Measure CC delta and dead code.
-- `evaluate_patch(issue_id, patch, repo_path, baseline_cc)` — Full evaluation of a single patch.
 - `run_cmd(cmd, cwd, timeout)` — Run a command and return (returncode, stdout, stderr).
 - `evaluate_correctness(patch_path, repo_path, issue)` — Check if patch makes tests pass without regressions.
 - `evaluate_security(repo_path, baseline_bandit)` — Run bandit and compare with baseline.
 - `evaluate_quality(repo_path, baseline_cc, patch_lines)` — Measure cyclomatic complexity delta and code efficiency.
 - `evaluate_tool(tool_dir, dataset)` — Evaluate all patches from a single tool.
 - `main()` — —
-- `generate_dataset_v1()` — Generate the full dataset v1 JSON file.
+- `evaluate_correctness(patch, repo_path)` — Apply patch and run tests.
+- `evaluate_security(repo_path, baseline_count)` — Run bandit and compute delta.
+- `evaluate_quality(repo_path, baseline_cc, patch_lines)` — Measure CC delta and dead code.
+- `evaluate_patch(issue_id, patch, repo_path, baseline_cc)` — Full evaluation of a single patch.
 - `score_iterations(iterations, resolved)` — Score iteration efficiency. Lower = better for resolved tasks.
 - `score_cost(cost_usd, resolved)` — Score cost efficiency. Cheaper = better for resolved tasks.
 - `compute_mergeability(scores)` — —
@@ -208,6 +207,7 @@ qualbench/
 - `score_tool(tool_name, evaluations, human_reviews)` — —
 - `generate_leaderboard(scores)` — —
 - `main()` — —
+- `generate_dataset_v1()` — Generate the full dataset v1 JSON file.
 - `run_cline(repo_path, problem_statement, timeout)` — Run Cline-style prompting on a repository.
 - `main()` — —
 - `run(issue, repo_path, timeout)` — Run your AI coding tool on a single issue.
