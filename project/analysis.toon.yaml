@@ -1,4 +1,4 @@
-# code2llm | 24f 3747L | python:22,shell:2 | 2026-04-05
+# code2llm | 24f 3824L | python:22,shell:2 | 2026-04-05
 # CC̄=4.0 | critical:1/94 | dups:0 | cycles:0
 
 HEALTH[1]:
@@ -22,17 +22,17 @@ PIPELINES[55]:
 LAYERS:
   scripts/                        CC̄=6.7    ←in:0  →out:0
   │ !! generate_dataset_v1        794L  0C    1m  CC=5      ←0
-  │ !! score                      260L  0C    7m  CC=19     ←0
-  │ evaluate                   242L  0C    6m  CC=11     ←0
+  │ !! score                      288L  0C    7m  CC=19     ←0
+  │ evaluate                   259L  0C    6m  CC=11     ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   runners/                        CC̄=4.2    ←in:0  →out:0
-  │ cline_runner               223L  0C    2m  CC=10     ←0
+  │ cline_runner               233L  0C    2m  CC=10     ←0
   │ aider_runner               204L  0C    3m  CC=11     ←0
-  │ template                   156L  0C    2m  CC=10     ←0
-  │ prollama_runner             67L  1C    2m  CC=3      ←0
-  │ openhands_runner            44L  1C    2m  CC=3      ←0
-  │ copilot_runner              43L  1C    2m  CC=2      ←0
+  │ template                   162L  0C    2m  CC=10     ←0
+  │ prollama_runner             72L  1C    2m  CC=3      ←0
+  │ openhands_runner            48L  1C    2m  CC=3      ←0
+  │ copilot_runner              47L  1C    2m  CC=2      ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   qualbench/                      CC̄=3.5    ←in:0  →out:0
@@ -49,7 +49,7 @@ LAYERS:
   │
   ./                              CC̄=1.5    ←in:0  →out:0
   │ project.sh                  35L  0C    0m  CC=0.0    ←0
-  │ server                      29L  1C    2m  CC=2      ←0
+  │ server                      32L  1C    2m  CC=2      ←0
   │
   action/                         CC̄=0.0    ←in:0  →out:0
   │ entrypoint.sh               56L  0C    0m  CC=0.0    ←0

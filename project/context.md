@@ -68,13 +68,13 @@
 - **Classes**: 1
 - **File**: `server.py`
 
-### runners.template
-- **Functions**: 2
-- **File**: `template.py`
-
 ### runners.cline_runner
 - **Functions**: 2
 - **File**: `cline_runner.py`
+
+### runners.template
+- **Functions**: 2
+- **File**: `template.py`
 
 ### runners.copilot_runner
 - **Functions**: 2
@@ -318,13 +318,13 @@ Features:
 - **Methods**: 1
 - **Key Methods**: qualbench.dataset.Issue.from_dict
 
-### qualbench.evaluation.EvaluationResult
-- **Methods**: 1
-- **Key Methods**: qualbench.evaluation.EvaluationResult.to_dict
-
 ### qualbench.runners.RunResult
 - **Methods**: 1
 - **Key Methods**: qualbench.runners.RunResult.to_dict
+
+### qualbench.evaluation.EvaluationResult
+- **Methods**: 1
+- **Key Methods**: qualbench.evaluation.EvaluationResult.to_dict
 
 ### qualbench.supervisor.RoutingDecision
 > Decision made by supervisor for an issue.
@@ -396,8 +396,8 @@ Functions exposed as public API (no underscore prefix):
 - `qualbench.dataset.Dataset.load` - 10 calls
 - `qualbench.evaluation.evaluate_security` - 9 calls
 - `scripts.score.load_human_reviews` - 9 calls
-- `qualbench.evaluation.evaluate_correctness` - 8 calls
 - `qualbench.runners.BaseRunner.run_timed` - 8 calls
+- `qualbench.evaluation.evaluate_correctness` - 8 calls
 - `scripts.evaluate.evaluate_security` - 8 calls
 - `qualbench.supervisor.SupervisorAI.solve` - 7 calls
 - `qualbench.dataset.Dataset.summary` - 7 calls

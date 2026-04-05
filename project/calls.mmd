@@ -3,60 +3,60 @@ flowchart LR
         qualbench__api___load_results["_load_results"]
         qualbench__api__get_result["get_result"]
         qualbench__api___save_results["_save_results"]
-        qualbench__api__submit_result["submit_result"]
         qualbench__api__get_leaderboard["get_leaderboard"]
+        qualbench__api__submit_result["submit_result"]
     end
     subgraph qualbench__benchmark
-        qualbench__benchmark___compute_verdict["_compute_verdict"]
+        qualbench__benchmark__QualBenchRunner___run_bandit["_run_bandit"]
         qualbench__benchmark__QualBenchRunner___run_quality["_run_quality"]
+        qualbench__benchmark___compute_verdict["_compute_verdict"]
+        qualbench__benchmark__QualBenchRunner___get_git_diff["_get_git_diff"]
         qualbench__benchmark__QualBenchRunner___run_tests["_run_tests"]
         qualbench__benchmark__QualBenchRunner__run["run"]
-        qualbench__benchmark__QualBenchRunner___get_git_diff["_get_git_diff"]
-        qualbench__benchmark__QualBenchRunner___run_bandit["_run_bandit"]
     end
     subgraph qualbench__cli
-        qualbench__cli__main["main"]
         qualbench__cli__cli["cli"]
-        qualbench__cli__quickstart["quickstart"]
+        qualbench__cli__main["main"]
         qualbench__cli___print_report["_print_report"]
         qualbench__cli__info["info"]
+        qualbench__cli__quickstart["quickstart"]
     end
     subgraph qualbench__dataset
-        qualbench__dataset__Issue__from_dict["from_dict"]
         qualbench__dataset__Dataset__load["load"]
+        qualbench__dataset__Issue__from_dict["from_dict"]
     end
     subgraph qualbench__evaluation
-        qualbench__evaluation___run["_run"]
+        qualbench__evaluation__evaluate_patch["evaluate_patch"]
         qualbench__evaluation__evaluate_correctness["evaluate_correctness"]
         qualbench__evaluation__evaluate_quality["evaluate_quality"]
-        qualbench__evaluation__evaluate_patch["evaluate_patch"]
+        qualbench__evaluation___run["_run"]
         qualbench__evaluation__evaluate_security["evaluate_security"]
     end
     subgraph qualbench__supervisor
         qualbench__supervisor__SupervisorAI__analyze_issue["analyze_issue"]
     end
     subgraph qualbench__utils
-        qualbench__utils__repos__clone_repo["clone_repo"]
         qualbench__utils__repos__setup_repos["setup_repos"]
+        qualbench__utils__repos__clone_repo["clone_repo"]
     end
     subgraph runners__aider_runner
         runners__aider_runner__run_aider["run_aider"]
         runners__aider_runner___estimate_cost["_estimate_cost"]
     end
     subgraph scripts__evaluate
-        scripts__evaluate__run_cmd["run_cmd"]
-        scripts__evaluate__evaluate_correctness["evaluate_correctness"]
-        scripts__evaluate__evaluate_security["evaluate_security"]
         scripts__evaluate__evaluate_tool["evaluate_tool"]
+        scripts__evaluate__evaluate_correctness["evaluate_correctness"]
         scripts__evaluate__evaluate_quality["evaluate_quality"]
+        scripts__evaluate__evaluate_security["evaluate_security"]
+        scripts__evaluate__run_cmd["run_cmd"]
     end
     subgraph scripts__score
-        scripts__score__score_tool["score_tool"]
-        scripts__score__score_iterations["score_iterations"]
-        scripts__score__score_cost["score_cost"]
-        scripts__score__main["main"]
         scripts__score__load_human_reviews["load_human_reviews"]
+        scripts__score__score_tool["score_tool"]
+        scripts__score__main["main"]
         scripts__score__compute_mergeability["compute_mergeability"]
+        scripts__score__score_cost["score_cost"]
+        scripts__score__score_iterations["score_iterations"]
     end
     qualbench__cli__quickstart --> qualbench__cli___print_report
     qualbench__cli__info --> qualbench__dataset__Dataset__load

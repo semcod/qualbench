@@ -1,4 +1,4 @@
-# qualbench | 24f 3747L | shell:2,python:22 | 2026-04-05
+# qualbench | 24f 3824L | shell:2,python:22 | 2026-04-05
 # stats: 94 func | 0 cls | 24 mod | CC̄=4.0 | critical:1 | cycles:0
 # alerts[5]: CC score_tool=19; fan-out main=19; fan-out main=16; fan-out submit=16; fan-out main=15
 # hotspots[5]: main fan=19; submit fan=16; main fan=16; main fan=15; main fan=15
@@ -19,16 +19,16 @@ M[24]:
   qualbench/utils/repos.py,100
   runners/__init__.py,0
   runners/aider_runner.py,204
-  runners/cline_runner.py,223
-  runners/copilot_runner.py,43
-  runners/openhands_runner.py,44
-  runners/prollama_runner.py,67
-  runners/template.py,156
+  runners/cline_runner.py,233
+  runners/copilot_runner.py,47
+  runners/openhands_runner.py,48
+  runners/prollama_runner.py,72
+  runners/template.py,162
   scripts/__init__.py,0
-  scripts/evaluate.py,242
+  scripts/evaluate.py,259
   scripts/generate_dataset_v1.py,794
-  scripts/score.py,260
-  server.py,29
+  scripts/score.py,288
+  server.py,32
 D:
   scripts/score.py:
     e: score_iterations,score_cost,compute_mergeability,load_human_reviews,score_tool,generate_leaderboard,main
@@ -92,13 +92,13 @@ D:
 Features:
 - ...
     main()
-  runners/template.py:
-    e: run,main
-    run(issue;repo_path;timeout)
-    main()
   runners/cline_runner.py:
     e: run_cline,main
     run_cline(repo_path;problem_statement;timeout)
+    main()
+  runners/template.py:
+    e: run,main
+    run(issue;repo_path;timeout)
     main()
   qualbench/api.py:
     e: ResultSubmission,LeaderboardEntry,LeaderboardResponse,_load_results,_save_results,submit_result,get_leaderboard,get_result,health_check

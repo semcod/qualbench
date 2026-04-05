@@ -1,4 +1,4 @@
-# qualbench | 94 func | 18f | 4231L | python | 2026-04-05
+# qualbench | 94 func | 18f | 4298L | python | 2026-04-05
 
 HEALTH:
   CC̄=4.0  critical=12 (limit:10)  dup=1  cycles=0
@@ -19,18 +19,18 @@ MODULES[24] (top by size):
   M[scripts/generate_dataset_v1.py] 794L C:0 F:1 CC↑5 D:0 (python)
   M[qualbench/supervisor.py] 383L C:3 F:11 CC↑10 D:0 (python)
   M[qualbench/cli.py] 294L C:0 F:10 CC↑10 D:0 (python)
-  M[scripts/score.py] 260L C:0 F:7 CC↑19 D:0 (python)
-  M[scripts/evaluate.py] 242L C:0 F:6 CC↑11 D:0 (python)
+  M[scripts/score.py] 288L C:0 F:7 CC↑19 D:0 (python)
+  M[scripts/evaluate.py] 259L C:0 F:6 CC↑11 D:0 (python)
   M[runners/cline_runner.py] 233L C:0 F:2 CC↑10 D:0 (python)
   M[qualbench/benchmark/__init__.py] 230L C:2 F:16 CC↑12 D:0 (python)
   M[runners/aider_runner.py] 204L C:0 F:3 CC↑11 D:0 (python)
   M[qualbench/api.py] 188L C:3 F:6 CC↑8 D:0 (python)
   M[qualbench/evaluation/__init__.py] 179L C:4 F:6 CC↑11 D:1 (python)
-  M[runners/template.py] 156L C:0 F:2 CC↑10 D:0 (python)
+  M[runners/template.py] 162L C:0 F:2 CC↑10 D:0 (python)
   M[qualbench/dataset.py] 129L C:3 F:6 CC↑3 D:0 (python)
   M[qualbench/utils/repos.py] 100L C:0 F:3 CC↑6 D:0 (python)
   M[qualbench/runners/__init__.py] 81L C:2 F:7 CC↑2 D:0 (python)
-  M[runners/prollama_runner.py] 67L C:1 F:2 CC↑3 D:0 (python)
+  M[runners/prollama_runner.py] 72L C:1 F:2 CC↑3 D:0 (python)
   LANGS: python:22/shell:2
 
 HOTSPOTS[10]:
@@ -48,4 +48,4 @@ REFACTOR[5]:
   [5] M/M Reduce main fan-out (currently 16)
 
 EVOLUTION:
-  2026-04-05 CC̄=4.0 crit=12 4231L // Automated analysis
+  2026-04-05 CC̄=4.0 crit=12 4298L // Automated analysis
