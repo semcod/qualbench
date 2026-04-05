@@ -13,7 +13,7 @@ QualBench results must be fully reproducible. This document describes how to ver
 
 ```bash
 # 1. Clone at the exact version tag
-git clone https://github.com/softreck/qualbench.git
+git clone https://github.com/semcod/qualbench.git
 cd qualbench
 git checkout v0.1.0  # match the published version
 

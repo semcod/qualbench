@@ -95,7 +95,7 @@ All dimension scores are normalized to 0-100 before weighting.
 Every benchmark run must be fully reproducible:
 
 ```bash
-git clone https://github.com/softreck/qualbench.git
+git clone https://github.com/semcod/qualbench.git
 cd qualbench
 make setup
 make benchmark

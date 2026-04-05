@@ -17,16 +17,16 @@ sprints:
   objectives:
   - Fix code quality issues
   task_patterns:
-  - id: ticket-9084d99c
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in qualbench/api.py
+  - id: ticket-36b42822
+    name: Fix magic-numbers issues
+    description: Resolve 33 magic-numbers issues in qualbench/benchmark/__init__.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
+    priority: high
+    estimate: 3d
     files:
-    - qualbench/api.py
-    rule_id: unused-imports
-    count: 4
+    - qualbench/benchmark/__init__.py
+    rule_id: magic-numbers
+    count: 33
     model_hints:
       planning: balanced
       implementation: balanced
@@ -43,107 +43,29 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d5718a09
-    name: Fix smart-return-type issues
-    description: Resolve 9 smart-return-type issues in qualbench/cli.py
-    task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - qualbench/cli.py
-    rule_id: smart-return-type
-    count: 9
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-05e514a4
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in qualbench/cli.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - qualbench/cli.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-c425291a
     name: Fix magic-numbers issues
-    description: Resolve 10 magic-numbers issues in qualbench/cli.py
+    description: Resolve 6 magic-numbers issues in qualbench/cli.py
     task_type: prefactor
     priority: high
     estimate: 2d
     files:
     - qualbench/cli.py
     rule_id: magic-numbers
-    count: 10
+    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
   - id: ticket-02195120
     name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in qualbench/cli.py
+    description: Resolve 1 ai-boilerplate issues in qualbench/cli.py
     task_type: prefactor
     priority: medium
     estimate: 1d
     files:
     - qualbench/cli.py
     rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-be1acbf3
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in qualbench/benchmark/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - qualbench/benchmark/__init__.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-36b42822
-    name: Fix magic-numbers issues
-    description: Resolve 35 magic-numbers issues in qualbench/benchmark/__init__.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - qualbench/benchmark/__init__.py
-    rule_id: magic-numbers
-    count: 35
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-847a58ee
-    name: Fix magic-numbers issues
-    description: Resolve 4 magic-numbers issues in qualbench/dataset.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - qualbench/dataset.py
-    rule_id: magic-numbers
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-33b15b6c
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in qualbench/evaluation/__init__.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - qualbench/evaluation/__init__.py
-    rule_id: unused-imports
-    count: 2
+    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
@@ -160,6 +82,19 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-847a58ee
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in qualbench/dataset.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - qualbench/dataset.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
   - id: ticket-c1300a72
     name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in qualbench/runners/__init__.py
@@ -170,32 +105,6 @@ sprints:
     - qualbench/runners/__init__.py
     rule_id: magic-numbers
     count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-48717a64
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in qualbench/supervisor.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - qualbench/supervisor.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-7219ce65
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in qualbench/supervisor.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - qualbench/supervisor.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
@@ -214,14 +123,14 @@ sprints:
       implementation: balanced
   - id: ticket-1919283f
     name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in qualbench/supervisor.py
+    description: Resolve 1 ai-boilerplate issues in qualbench/supervisor.py
     task_type: prefactor
     priority: medium
     estimate: 1d
     files:
     - qualbench/supervisor.py
     rule_id: ai-boilerplate
-    count: 2
+    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
@@ -233,6 +142,32 @@ sprints:
     estimate: 1d
     files:
     - qualbench/utils/repos.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0a53908f
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in runners/copilot_runner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - runners/copilot_runner.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e6d4107f
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in runners/copilot_runner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - runners/copilot_runner.py
     rule_id: magic-numbers
     count: 1
     model_hints:
@@ -277,32 +212,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-0a53908f
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in runners/copilot_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - runners/copilot_runner.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-e6d4107f
-    name: Fix magic-numbers issues
-    description: Resolve 1 magic-numbers issues in runners/copilot_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - runners/copilot_runner.py
-    rule_id: magic-numbers
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-2a13f9fe
     name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in runners/cline_runner.py
@@ -313,19 +222,6 @@ sprints:
     - runners/cline_runner.py
     rule_id: smart-return-type
     count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-0e202039
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in runners/cline_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - runners/cline_runner.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
@@ -381,32 +277,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-f34d62ac
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in runners/prollama_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - runners/prollama_runner.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-0589a119
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in runners/prollama_runner.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - runners/prollama_runner.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-9f01e3df
     name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in runners/template.py
@@ -455,6 +325,32 @@ sprints:
     files:
     - runners/template.py
     rule_id: ai-boilerplate
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f34d62ac
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in runners/prollama_runner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - runners/prollama_runner.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0589a119
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in runners/prollama_runner.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - runners/prollama_runner.py
+    rule_id: magic-numbers
     count: 2
     model_hints:
       planning: balanced
@@ -550,45 +446,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-0ffb79bb
-    name: Fix smart-return-type issues
-    description: Resolve 1 smart-return-type issues in scripts/score.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - scripts/score.py
-    rule_id: smart-return-type
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-2927686b
-    name: Fix magic-numbers issues
-    description: Resolve 13 magic-numbers issues in scripts/score.py
-    task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - scripts/score.py
-    rule_id: magic-numbers
-    count: 13
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-6bf280e8
-    name: Fix ai-boilerplate issues
-    description: Resolve 2 ai-boilerplate issues in scripts/score.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - scripts/score.py
-    rule_id: ai-boilerplate
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-6e14f63f
     name: Fix smart-return-type issues
     description: Resolve 2 smart-return-type issues in server.py
@@ -625,6 +482,45 @@ sprints:
     - server.py
     rule_id: ai-boilerplate
     count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0ffb79bb
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in scripts/score.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/score.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2927686b
+    name: Fix magic-numbers issues
+    description: Resolve 13 magic-numbers issues in scripts/score.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - scripts/score.py
+    rule_id: magic-numbers
+    count: 13
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6bf280e8
+    name: Fix ai-boilerplate issues
+    description: Resolve 2 ai-boilerplate issues in scripts/score.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/score.py
+    rule_id: ai-boilerplate
+    count: 2
     model_hints:
       planning: balanced
       implementation: balanced

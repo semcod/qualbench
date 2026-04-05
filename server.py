@@ -13,13 +13,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
-        # Serve landing.html as root
+        # Serve index.html as root
         if self.path == '/':
-            self.path = '/landing.html'
+            self.path = '/index.html'
         return super().do_GET()
 
 if __name__ == '__main__':
-    os.chdir('/home/tom/github/semcod/qualbench')
+    os.chdir('/home/tom/github/semcod/qualbench/www')
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
         print(f"Serving QualBench landing page at http://localhost:{PORT}")
         print("Press Ctrl+C to stop")

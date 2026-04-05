@@ -60,7 +60,7 @@ The benchmark is designed as an open platform — anyone can add their tool by i
 
 The package is built with hatchling, uses Click for CLI, and integrates radon (complexity), bandit (security), ruff (linting), and pytest (correctness) for automated evaluation. The runner interface is a simple abstract base class with one required method.
 
-**Repository:** github.com/softreck/qualbench
+**Repository:** github.com/semcod/qualbench
 **License:** Apache 2.0
 **Website:** qualbench.com
 

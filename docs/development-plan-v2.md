@@ -204,7 +204,7 @@ inputs:
     required: false
 runs:
   using: "docker"
-  image: "docker://softreck/qualbench-action:latest"
+  image: "docker://semcod/qualbench-action:latest"
 ```
 
 **PR comment output** (posted automatically via GitHub API):
@@ -236,7 +236,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: softreck/qualbench-action@v1
+      - uses: semcod/qualbench-action@v1
         with:
           tool: prollama
           fail_on_score: 70
@@ -337,7 +337,7 @@ Overengineering the API at this stage is a waste. If people want CSV or GraphQL 
 ### 3.4 Docker runner (week 15, 6h)
 
 ```bash
-docker run softreck/qualbench:latest run --tool prollama
+docker run semcod/qualbench:latest run --tool prollama
 ```
 
 For users who don't want Python dependencies. Maps to the same `prollama benchmark run` internally.
@@ -465,7 +465,7 @@ Probability: 60%. Impact: high. Mitigation: this plan explicitly lists what got 
 - GitHub Action installs (target: 100 by week 16)
 - `prollama benchmark run` executions per week
 - PyPI downloads for qualbench
-- GitHub stars on softreck/qualbench
+- GitHub stars on semcod/qualbench
 
 ### Revenue (lagging indicators)
 - MRR from Professional subscriptions

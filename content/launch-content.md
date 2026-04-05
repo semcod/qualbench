@@ -29,7 +29,7 @@ We expect the results to show that correctness and mergeability are very differe
 
 Anyone can add their tool: copy the runner template, implement run(), submit a PR.
 
-GitHub: https://github.com/softreck/qualbench
+GitHub: https://github.com/semcod/qualbench
 
 
 ---
@@ -95,7 +95,7 @@ Results coming next week.
 
 Add your tool: copy the runner template, implement run(), submit a PR.
 
-github.com/softreck/qualbench
+github.com/semcod/qualbench
 
 
 ---

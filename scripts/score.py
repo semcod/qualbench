@@ -221,7 +221,7 @@ def generate_leaderboard(scores: dict) -> str:
     lines.extend([
         "---",
         "",
-        "[Submit your tool](https://github.com/softreck/qualbench#adding-your-tool) to the leaderboard.",
+        "[Submit your tool](https://github.com/semcod/qualbench#adding-your-tool) to the leaderboard.",
         "",
         "Built by [Softreck](https://softreck.com). Powered by [pyqual](https://github.com/semcod/pyqual).",
     ])
