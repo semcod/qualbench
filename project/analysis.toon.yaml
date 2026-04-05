@@ -1,4 +1,4 @@
-# code2llm | 24f 3738L | python:22,shell:2 | 2026-04-05
+# code2llm | 24f 3747L | python:22,shell:2 | 2026-04-05
 # CC̄=4.0 | critical:1/94 | dups:0 | cycles:0
 
 HEALTH[1]:
@@ -28,7 +28,7 @@ LAYERS:
   │
   runners/                        CC̄=4.2    ←in:0  →out:0
   │ cline_runner               223L  0C    2m  CC=10     ←0
-  │ aider_runner               195L  0C    3m  CC=11     ←0
+  │ aider_runner               204L  0C    3m  CC=11     ←0
   │ template                   156L  0C    2m  CC=10     ←0
   │ prollama_runner             67L  1C    2m  CC=3      ←0
   │ openhands_runner            44L  1C    2m  CC=3      ←0

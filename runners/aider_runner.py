@@ -20,10 +20,19 @@ import time
 from pathlib import Path
 
 
+# Constants
+DEFAULT_TIMEOUT = 900
+COST_TIME_THRESHOLD_LOW = 300  # 5 min
+COST_TIME_THRESHOLD_HIGH = 600  # 10 min
+BASE_COST_LOW = 0.30
+BASE_COST_MEDIUM = 0.50
+BASE_COST_HIGH = 0.80
+
+
 def run_aider(
     repo_path: str,
     problem_statement: str,
-    timeout: int = 900,
+    timeout: int = DEFAULT_TIMEOUT,
 ) -> dict:
     """Run Aider on a repository with the given problem statement.
     
@@ -125,15 +134,15 @@ def _estimate_cost(output: str, elapsed: float) -> float:
     Typical Aider session: ~50k input, ~20k output = $0.45
     """
     # Rough heuristic: $0.30-0.60 per task
-    base_cost = 0.30
-    if elapsed > 300:  # >5 min tasks cost more
-        base_cost = 0.50
-    if elapsed > 600:  # >10 min
-        base_cost = 0.80
+    base_cost = BASE_COST_LOW
+    if elapsed > COST_TIME_THRESHOLD_LOW:  # >5 min tasks cost more
+        base_cost = BASE_COST_MEDIUM
+    if elapsed > COST_TIME_THRESHOLD_HIGH:  # >10 min
+        base_cost = BASE_COST_HIGH
     return base_cost
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Run Aider on QualBench dataset')
     parser.add_argument('--dataset', required=True, help='Path to dataset JSON')
     parser.add_argument('--output', required=True, help='Output directory')

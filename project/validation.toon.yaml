@@ -1,29 +1,13 @@
-# vallm batch | 71f | 32✓ 1⚠ 4✗ | 2026-04-05
+# vallm batch | 71f | 36✓ 1⚠ 0✗ | 2026-04-05
 
 SUMMARY:
-  scanned: 71  passed: 32 (45.1%)  warnings: 1  errors: 4  unsupported: 35
+  scanned: 71  passed: 36 (50.7%)  warnings: 1  errors: 0  unsupported: 35
 
 WARNINGS[1]{path,score}:
   scripts/score.py,0.97
     issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,score_tool has cyclomatic complexity 19 (max: 15),79
-      complexity.lizard_cc,warning,score_tool: CC=19 exceeds limit 15,79
-
-ERRORS[4]{path,score}:
-  tests/test_api.py,0.79
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'pytest' not found,4
-      python.import.resolvable,error,Module 'fastapi.testclient' not found,5
-  qualbench/api.py,0.89
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'fastapi' not found,16
-      python.import.resolvable,error,Module 'fastapi.middleware.cors' not found,17
-  tests/test_core.py,0.93
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'pytest' not found,4
-  qualbench/cli.py,0.95
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'requests' not found,8
+      complexity.cyclomatic,warning,score_tool has cyclomatic complexity 19 (max: 15),107
+      complexity.lizard_cc,warning,score_tool: CC=19 exceeds limit 15,107
 
 UNSUPPORTED[5]{bucket,count}:
   *.md,23

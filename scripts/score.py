@@ -11,6 +11,34 @@ import os
 from datetime import datetime
 
 
+# Constants
+SCORE_100 = 100
+SCORE_90 = 90
+SCORE_85 = 85
+SCORE_75 = 75
+SCORE_70 = 70
+SCORE_60 = 60
+SCORE_50 = 50
+SCORE_40 = 40
+SCORE_30 = 30
+SCORE_20 = 20
+SCORE_5 = 5
+SCORE_0 = 0
+
+COST_THRESHOLD_5C = 0.05
+COST_THRESHOLD_20C = 0.20
+COST_THRESHOLD_50C = 0.50
+COST_THRESHOLD_1D = 1.00
+COST_THRESHOLD_2D = 2.00
+COST_THRESHOLD_5D = 5.00
+
+ITERATION_1 = 1
+ITERATION_2 = 2
+ITERATION_3 = 3
+ITERATION_5 = 5
+
+MERGEABILITY_THRESHOLD = 75
+
 WEIGHTS = {
     "correctness": 0.25,
     "security": 0.15,
@@ -24,35 +52,35 @@ WEIGHTS = {
 def score_iterations(iterations: int, resolved: bool) -> float:
     """Score iteration efficiency. Lower = better for resolved tasks."""
     if not resolved:
-        return 0
-    if iterations <= 1:
-        return 100
-    if iterations == 2:
-        return 85
-    if iterations == 3:
-        return 70
-    if iterations <= 5:
-        return 50
-    return max(0, 100 - iterations * 12)
+        return SCORE_0
+    if iterations <= ITERATION_1:
+        return SCORE_100
+    if iterations == ITERATION_2:
+        return SCORE_85
+    if iterations == ITERATION_3:
+        return SCORE_70
+    if iterations <= ITERATION_5:
+        return SCORE_50
+    return max(SCORE_0, SCORE_100 - iterations * 12)
 
 
 def score_cost(cost_usd: float, resolved: bool) -> float:
     """Score cost efficiency. Cheaper = better for resolved tasks."""
     if not resolved:
-        return 0
-    if cost_usd <= 0.05:
-        return 100
-    if cost_usd <= 0.20:
-        return 90
-    if cost_usd <= 0.50:
-        return 75
-    if cost_usd <= 1.00:
-        return 60
-    if cost_usd <= 2.00:
-        return 40
-    if cost_usd <= 5.00:
-        return 20
-    return 5
+        return SCORE_0
+    if cost_usd <= COST_THRESHOLD_5C:
+        return SCORE_100
+    if cost_usd <= COST_THRESHOLD_20C:
+        return SCORE_90
+    if cost_usd <= COST_THRESHOLD_50C:
+        return SCORE_75
+    if cost_usd <= COST_THRESHOLD_1D:
+        return SCORE_60
+    if cost_usd <= COST_THRESHOLD_2D:
+        return SCORE_40
+    if cost_usd <= COST_THRESHOLD_5D:
+        return SCORE_20
+    return SCORE_5
 
 
 def compute_mergeability(scores: list[int]) -> float:
@@ -133,7 +161,7 @@ def score_tool(tool_name: str, evaluations: list[dict], human_reviews: dict) -> 
 
     total = len(issue_scores)
     resolved_count = sum(1 for s in issue_scores if s["resolved"])
-    mergeable_count = sum(1 for s in issue_scores if s["mergeability"] >= 75)
+    mergeable_count = sum(1 for s in issue_scores if s["mergeability"] >= MERGEABILITY_THRESHOLD)
     avg_score = sum(s["quality_score"] for s in issue_scores) / total if total else 0
     avg_cost = sum(s["cost_usd"] for s in issue_scores) / total if total else 0
     avg_iterations = sum(s["iteration_count"] for s in issue_scores) / total if total else 0
@@ -229,7 +257,7 @@ def generate_leaderboard(scores: dict) -> str:
     return "\n".join(lines)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--evaluation", default="results/evaluation.json")
     parser.add_argument("--reviews", default="reviews/")

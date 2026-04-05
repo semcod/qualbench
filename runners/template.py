@@ -16,7 +16,13 @@ import time
 from pathlib import Path
 
 
-def run(issue: dict, repo_path: str, timeout: int = 900) -> dict:
+# Constants
+DEFAULT_TIMEOUT = 900
+REPO_PATH_PREFIX = "repos"
+SEPARATOR_LENGTH = 60
+
+
+def run(issue: dict, repo_path: str, timeout: int = DEFAULT_TIMEOUT) -> dict:
     """
     Run your AI coding tool on a single issue.
 
@@ -78,11 +84,11 @@ def run(issue: dict, repo_path: str, timeout: int = 900) -> dict:
     }
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Run QualBench with your tool")
     parser.add_argument("--dataset", required=True, help="Path to qualbench-v0.json")
     parser.add_argument("--output", required=True, help="Output directory for results")
-    parser.add_argument("--timeout", type=int, default=900, help="Timeout per issue (seconds)")
+    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT, help="Timeout per issue (seconds)")
     parser.add_argument("--issues", nargs="*", help="Specific issue IDs to run (e.g., QB-001 QB-005)")
     args = parser.parse_args()
 
@@ -97,12 +103,12 @@ def main():
 
     results = []
     for issue in issues:
-        print(f"\n{'='*60}")
+        print(f"\n{'='*SEPARATOR_LENGTH}")
         print(f"Running: {issue['id']} — {issue['title']}")
         print(f"Repo: {issue['repo']} | Difficulty: {issue['difficulty']}")
-        print(f"{'='*60}\n")
+        print(f"{'='*SEPARATOR_LENGTH}\n")
 
-        repo_path = os.path.join("repos", issue["repo"].replace("/", "__"))
+        repo_path = os.path.join(REPO_PATH_PREFIX, issue["repo"].replace("/", "__"))
 
         if not os.path.isdir(repo_path):
             print(f"  SKIP: repo not found at {repo_path}")

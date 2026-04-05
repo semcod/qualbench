@@ -8,14 +8,18 @@ from qualbench.dataset import Issue
 from qualbench.runners import BaseRunner, RunResult
 
 
+# Constants
+DEFAULT_TIMEOUT = 900
+
+
 class Runner(BaseRunner):
     name = "openhands"
 
-    def setup(self):
+    def setup(self) -> None:
         if not os.environ.get("ANTHROPIC_API_KEY") and not os.environ.get("OPENAI_API_KEY"):
             raise RuntimeError("Set ANTHROPIC_API_KEY or OPENAI_API_KEY for OpenHands")
 
-    def run(self, issue: Issue, repo_path: str, timeout: int = 900) -> RunResult:
+    def run(self, issue: Issue, repo_path: str, timeout: int = DEFAULT_TIMEOUT) -> RunResult:
         start = time.time()
 
         # OpenHands runs in Docker

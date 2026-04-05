@@ -15,11 +15,28 @@ import argparse
 import json
 import os
 import subprocess
-import sys
 from pathlib import Path
 
 
-def run_cmd(cmd: list[str], cwd: str = None, timeout: int = 120) -> tuple[int, str, str]:
+# Constants
+DEFAULT_CMD_TIMEOUT = 120
+TEST_TIMEOUT = 300
+OUTPUT_SNIPPET_LENGTH = 500
+BASELINE_CC_DEFAULT = 5.0
+SCORE_100 = 100
+SCORE_90 = 90
+SCORE_70 = 70
+SCORE_40 = 40
+SCORE_30 = 30
+SCORE_0 = 0
+CC_PENALTY_PER_POINT = 15
+DEAD_CODE_PENALTY = 10
+HIGH_SEVERITY_THRESHOLD = 2
+
+REPO_PATH_PREFIX = "repos"
+
+
+def run_cmd(cmd: list[str], cwd: str = None, timeout: int = DEFAULT_CMD_TIMEOUT) -> tuple[int, str, str]:
     """Run a command and return (returncode, stdout, stderr)."""
     try:
         result = subprocess.run(
@@ -47,7 +64,7 @@ def evaluate_correctness(patch_path: str, repo_path: str, issue: dict) -> dict:
     rc, stdout, stderr = run_cmd(
         ["python", "-m", "pytest", "--tb=short", "-q"],
         cwd=repo_path,
-        timeout=300,
+        timeout=TEST_TIMEOUT,
     )
 
     tests_pass = rc == 0
@@ -55,8 +72,8 @@ def evaluate_correctness(patch_path: str, repo_path: str, issue: dict) -> dict:
         "score": 100 if tests_pass else 0,
         "patch_applies": True,
         "tests_pass": tests_pass,
-        "test_output": stdout[-500:] if stdout else "",
-        "error": stderr[-500:] if not tests_pass else None,
+        "test_output": stdout[-OUTPUT_SNIPPET_LENGTH:] if stdout else "",
+        "error": stderr[-OUTPUT_SNIPPET_LENGTH:] if not tests_pass else None,
     }
 
 
@@ -78,22 +95,22 @@ def evaluate_security(repo_path: str, baseline_bandit: dict) -> dict:
 
     # Score: 0 new = 100%, 1 low = 90%, 1 med = 70%, 1 high = 40%, 2+ high = 0%
     if new_issues == 0:
-        score = 100
+        score = SCORE_100
     elif new_issues == 1:
         severities = [r["issue_severity"] for r in findings["results"]]
         new_severities = severities[baseline_count:]
         if "HIGH" in new_severities:
-            score = 40
+            score = SCORE_40
         elif "MEDIUM" in new_severities:
-            score = 70
+            score = SCORE_70
         else:
-            score = 90
+            score = SCORE_90
     else:
         high_count = sum(
             1 for r in findings["results"][baseline_count:]
             if r.get("issue_severity") == "HIGH"
         )
-        score = 0 if high_count >= 2 else 30
+        score = SCORE_0 if high_count >= HIGH_SEVERITY_THRESHOLD else SCORE_30
 
     return {
         "score": score,
@@ -129,9 +146,9 @@ def evaluate_quality(repo_path: str, baseline_cc: float, patch_lines: int) -> di
     # CC score: lower or equal = 100%, each point increase = -15%
     cc_delta = current_cc - baseline_cc
     if cc_delta <= 0:
-        cc_score = 100
+        cc_score = SCORE_100
     else:
-        cc_score = max(0, 100 - int(cc_delta * 15))
+        cc_score = max(SCORE_0, SCORE_100 - int(cc_delta * CC_PENALTY_PER_POINT))
 
     # Check for dead code with ruff
     rc_ruff, stdout_ruff, _ = run_cmd(
@@ -140,7 +157,7 @@ def evaluate_quality(repo_path: str, baseline_cc: float, patch_lines: int) -> di
     )
     dead_code_issues = stdout_ruff.count("\n") if stdout_ruff else 0
 
-    quality_score = max(0, cc_score - dead_code_issues * 10)
+    quality_score = max(SCORE_0, cc_score - dead_code_issues * DEAD_CODE_PENALTY)
 
     return {
         "score": quality_score,
@@ -183,7 +200,7 @@ def evaluate_tool(tool_dir: str, dataset: dict) -> list[dict]:
             })
             continue
 
-        repo_path = os.path.join("repos", issue["repo"].replace("/", "__"))
+        repo_path = os.path.join(REPO_PATH_PREFIX, issue["repo"].replace("/", "__"))
 
         # Save patch to temp file
         patch_path = os.path.join(tool_dir, f"{issue_id}.patch")
@@ -195,7 +212,7 @@ def evaluate_tool(tool_dir: str, dataset: dict) -> list[dict]:
         security = evaluate_security(repo_path, issue.get("baseline_bandit", {}))
         quality = evaluate_quality(
             repo_path,
-            issue.get("baseline_cc", 5.0),
+            issue.get("baseline_cc", BASELINE_CC_DEFAULT),
             len(tool_result["patch"].split("\n")),
         )
 
@@ -212,7 +229,7 @@ def evaluate_tool(tool_dir: str, dataset: dict) -> list[dict]:
     return results
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results-dir", required=True)
     parser.add_argument("--dataset", required=True)

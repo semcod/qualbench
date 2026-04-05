@@ -1,7 +1,7 @@
 <!-- code2docs:start --># qualbench
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-69-green)
-> **69** functions | **15** classes | **19** files | CC̄ = 3.9
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-94-green)
+> **94** functions | **21** classes | **24** files | CC̄ = 4.0
 
 > Auto-generated project documentation from source code analysis.
 
@@ -147,27 +147,33 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 qualbench/
-├── project    ├── cli├── qualbench/        ├── repos    ├── utils/├── server    ├── dataset├── scripts/    ├── evaluate    ├── evaluation/    ├── entrypoint    ├── template    ├── copilot_runner├── runners/    ├── benchmark/    ├── prollama_runner    ├── openhands_runner    ├── score    ├── runners/```
+├── project├── qualbench/    ├── cli├── server    ├── supervisor        ├── repos    ├── utils/    ├── dataset    ├── evaluation/    ├── runners/├── scripts/    ├── evaluate    ├── generate_dataset_v1    ├── entrypoint    ├── score    ├── cline_runner    ├── template    ├── copilot_runner├── runners/    ├── prollama_runner    ├── aider_runner    ├── openhands_runner    ├── benchmark/    ├── api```
 
 ## API Overview
 
 ### Classes
 
 - **`Handler`** — —
-- **`QualityGates`** — —
+- **`RoutingDecision`** — Decision made by supervisor for an issue.
+- **`ParallelResult`** — Result from parallel execution.
+- **`SupervisorAI`** — Intelligent supervisor for AI code generation.
+- **`QualityGates`** — Quality gates for v0 and v1 datasets.
 - **`Issue`** — —
 - **`Dataset`** — —
 - **`CorrectnessResult`** — —
 - **`SecurityResult`** — —
 - **`QualityResult`** — —
 - **`EvaluationResult`** — —
+- **`RunResult`** — —
+- **`BaseRunner`** — Base class for QualBench tool runners.
+- **`Runner`** — —
+- **`Runner`** — —
 - **`Runner`** — —
 - **`QualBenchResult`** — Portable result schema — used in CLI, API, GitHub Action, leaderboard.
 - **`QualBenchRunner`** — Run QualBench on current repository diff.
-- **`Runner`** — —
-- **`Runner`** — —
-- **`RunResult`** — —
-- **`BaseRunner`** — Base class for QualBench tool runners.
+- **`ResultSubmission`** — Result in portable schema format.
+- **`LeaderboardEntry`** — —
+- **`LeaderboardResponse`** — —
 
 ### Functions
 
@@ -177,22 +183,24 @@ qualbench/
 - `compare(tool, issue)` — Compare your tool against the leaderboard.
 - `info(dataset)` — Show dataset summary.
 - `doctor()` — Check if required tools are available.
+- `submit(tool, mode, issue, api_url)` — Submit benchmark result to leaderboard.
+- `leaderboard(api_url, issue, tool)` — View current leaderboard rankings.
 - `main()` — —
+- `main()` — CLI for supervisor AI.
 - `clone_repo(repo, target, commit)` — Clone a repository and optionally checkout a specific commit.
 - `collect_baseline(repo_path)` — Collect baseline metrics (CC, bandit count) for a repository.
 - `setup_repos(dataset, output_dir)` — Clone all repos needed for the dataset.
+- `evaluate_correctness(patch, repo_path)` — Apply patch and run tests.
+- `evaluate_security(repo_path, baseline_count)` — Run bandit and compute delta.
+- `evaluate_quality(repo_path, baseline_cc, patch_lines)` — Measure CC delta and dead code.
+- `evaluate_patch(issue_id, patch, repo_path, baseline_cc)` — Full evaluation of a single patch.
 - `run_cmd(cmd, cwd, timeout)` — Run a command and return (returncode, stdout, stderr).
 - `evaluate_correctness(patch_path, repo_path, issue)` — Check if patch makes tests pass without regressions.
 - `evaluate_security(repo_path, baseline_bandit)` — Run bandit and compare with baseline.
 - `evaluate_quality(repo_path, baseline_cc, patch_lines)` — Measure cyclomatic complexity delta and code efficiency.
 - `evaluate_tool(tool_dir, dataset)` — Evaluate all patches from a single tool.
 - `main()` — —
-- `evaluate_correctness(patch, repo_path)` — Apply patch and run tests.
-- `evaluate_security(repo_path, baseline_count)` — Run bandit and compute delta.
-- `evaluate_quality(repo_path, baseline_cc, patch_lines)` — Measure CC delta and dead code.
-- `evaluate_patch(issue_id, patch, repo_path, baseline_cc)` — Full evaluation of a single patch.
-- `run(issue, repo_path, timeout)` — Run your AI coding tool on a single issue.
-- `main()` — —
+- `generate_dataset_v1()` — Generate the full dataset v1 JSON file.
 - `score_iterations(iterations, resolved)` — Score iteration efficiency. Lower = better for resolved tasks.
 - `score_cost(cost_usd, resolved)` — Score cost efficiency. Cheaper = better for resolved tasks.
 - `compute_mergeability(scores)` — —
@@ -200,6 +208,16 @@ qualbench/
 - `score_tool(tool_name, evaluations, human_reviews)` — —
 - `generate_leaderboard(scores)` — —
 - `main()` — —
+- `run_cline(repo_path, problem_statement, timeout)` — Run Cline-style prompting on a repository.
+- `main()` — —
+- `run(issue, repo_path, timeout)` — Run your AI coding tool on a single issue.
+- `main()` — —
+- `run_aider(repo_path, problem_statement, timeout)` — Run Aider on a repository with the given problem statement.
+- `main()` — —
+- `submit_result(submission, authorization)` — Submit a benchmark result. Requires tool-owner token.
+- `get_leaderboard(issue, tool)` — Get current leaderboard rankings.
+- `get_result(tool, issue_id)` — Get specific result by tool and issue.
+- `health_check()` — —
 
 
 ## Project Structure
@@ -207,27 +225,32 @@ qualbench/
 📄 `action.entrypoint`
 📄 `project`
 📦 `qualbench`
+📄 `qualbench.api` (6 functions, 3 classes)
 📦 `qualbench.benchmark` (16 functions, 2 classes)
-📄 `qualbench.cli` (8 functions)
+📄 `qualbench.cli` (10 functions)
 📄 `qualbench.dataset` (6 functions, 3 classes)
 📦 `qualbench.evaluation` (6 functions, 4 classes)
 📦 `qualbench.runners` (7 functions, 2 classes)
+📄 `qualbench.supervisor` (11 functions, 3 classes)
 📦 `qualbench.utils`
 📄 `qualbench.utils.repos` (3 functions)
 📦 `runners`
+📄 `runners.aider_runner` (3 functions)
+📄 `runners.cline_runner` (2 functions)
 📄 `runners.copilot_runner` (2 functions, 1 classes)
 📄 `runners.openhands_runner` (2 functions, 1 classes)
 📄 `runners.prollama_runner` (2 functions, 1 classes)
 📄 `runners.template` (2 functions)
 📦 `scripts`
 📄 `scripts.evaluate` (6 functions)
+📄 `scripts.generate_dataset_v1` (1 functions)
 📄 `scripts.score` (7 functions)
 📄 `server` (2 functions, 1 classes)
 
 ## Requirements
 
 - Python >= >=3.10
-- click >=8.1- radon >=6.0- bandit >=1.7- ruff >=0.4- GitPython >=3.1
+- click >=8.1- radon >=6.0- bandit >=1.7- ruff >=0.4- GitPython >=3.1- fastapi >=0.100- requests >=2.31- uvicorn >=0.23- pydantic >=2.0
 
 ## Contributing
 

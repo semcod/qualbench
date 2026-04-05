@@ -1,4 +1,4 @@
-# qualbench | 24f 3738L | shell:2,python:22 | 2026-04-05
+# qualbench | 24f 3747L | shell:2,python:22 | 2026-04-05
 # stats: 94 func | 0 cls | 24 mod | CC̄=4.0 | critical:1 | cycles:0
 # alerts[5]: CC score_tool=19; fan-out main=19; fan-out main=16; fan-out submit=16; fan-out main=15
 # hotspots[5]: main fan=19; submit fan=16; main fan=16; main fan=15; main fan=15
@@ -18,7 +18,7 @@ M[24]:
   qualbench/utils/__init__.py,0
   qualbench/utils/repos.py,100
   runners/__init__.py,0
-  runners/aider_runner.py,195
+  runners/aider_runner.py,204
   runners/cline_runner.py,223
   runners/copilot_runner.py,43
   runners/openhands_runner.py,44
@@ -92,13 +92,13 @@ D:
 Features:
 - ...
     main()
-  runners/cline_runner.py:
-    e: run_cline,main
-    run_cline(repo_path;problem_statement;timeout)
-    main()
   runners/template.py:
     e: run,main
     run(issue;repo_path;timeout)
+    main()
+  runners/cline_runner.py:
+    e: run_cline,main
+    run_cline(repo_path;problem_statement;timeout)
     main()
   qualbench/api.py:
     e: ResultSubmission,LeaderboardEntry,LeaderboardResponse,_load_results,_save_results,submit_result,get_leaderboard,get_result,health_check

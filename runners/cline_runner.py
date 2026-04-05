@@ -19,6 +19,16 @@ import time
 from pathlib import Path
 
 
+# Constants
+DEFAULT_TIMEOUT = 900
+MAX_EXPLORATION_ISSUES = 5
+TOKENS_PER_MILLION = 1_000_000
+INPUT_TOKEN_COST = 3  # $ per million tokens
+OUTPUT_TOKEN_COST = 15  # $ per million tokens
+MAX_TOKENS = 4096
+CLAUDE_MODEL = 'claude-3-5-sonnet-20241022'
+
+
 CLINE_SYSTEM_PROMPT = """You are Cline, a VS Code extension AI assistant specialized in coding tasks.
 
 Your approach:
@@ -40,7 +50,7 @@ Always:
 def run_cline(
     repo_path: str,
     problem_statement: str,
-    timeout: int = 900,
+    timeout: int = DEFAULT_TIMEOUT,
 ) -> dict:
     """Run Cline-style prompting on a repository.
     
@@ -58,7 +68,7 @@ def run_cline(
             'stderr': 'anthropic package not installed: pip install anthropic',
             'time_seconds': 0,
             'changed_files': [],
-            'model': 'claude-3-5-sonnet-20241022',
+            'model': CLAUDE_MODEL,
             'cost_usd': 0,
         }
     
@@ -86,8 +96,8 @@ Output your exploration in a structured format."""
     
     try:
         response = client.messages.create(
-            model='claude-3-5-sonnet-20241022',
-            max_tokens=4096,
+            model=CLAUDE_MODEL,
+            max_tokens=MAX_TOKENS,
             messages=messages,
         )
         exploration = response.content[0].text
@@ -113,8 +123,8 @@ Format as executable commands or clear file edits."""
         messages.append({'role': 'user', 'content': solution_prompt})
         
         response2 = client.messages.create(
-            model='claude-3-5-sonnet-20241022',
-            max_tokens=4096,
+            model=CLAUDE_MODEL,
+            max_tokens=MAX_TOKENS,
             messages=messages,
         )
         solution = response2.content[0].text
@@ -128,7 +138,7 @@ Format as executable commands or clear file edits."""
         
         # Calculate cost (Claude Sonnet pricing)
         # $3/million input, $15/million output
-        cost = (total_input / 1_000_000 * 3) + (total_output / 1_000_000 * 15)
+        cost = (total_input / TOKENS_PER_MILLION * INPUT_TOKEN_COST) + (total_output / TOKENS_PER_MILLION * OUTPUT_TOKEN_COST)
         
         return {
             'success': True,
@@ -137,7 +147,7 @@ Format as executable commands or clear file edits."""
             'stderr': '',
             'time_seconds': elapsed,
             'changed_files': [],  # Would parse from solution
-            'model': 'claude-3-5-sonnet-20241022',
+            'model': CLAUDE_MODEL,
             'cost_usd': round(cost, 3),
             'iterations': 2,
             'tokens': {'input': total_input, 'output': total_output},
@@ -152,16 +162,16 @@ Format as executable commands or clear file edits."""
             'stderr': str(e),
             'time_seconds': elapsed,
             'changed_files': [],
-            'model': 'claude-3-5-sonnet-20241022',
+            'model': CLAUDE_MODEL,
             'cost_usd': 0,
         }
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Run Cline on QualBench dataset')
     parser.add_argument('--dataset', required=True, help='Path to dataset JSON')
     parser.add_argument('--output', required=True, help='Output directory')
-    parser.add_argument('--timeout', type=int, default=900, help='Timeout per issue')
+    parser.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT, help='Timeout per issue')
     parser.add_argument('--issues', nargs='+', help='Specific issue IDs to run')
     
     args = parser.parse_args()
@@ -183,7 +193,7 @@ def main():
     
     # Run Cline on each issue
     results = []
-    for issue in issues[:5]:  # Limit to 5 for testing
+    for issue in issues[:MAX_EXPLORATION_ISSUES]:  # Limit to 5 for testing
         print(f"\n🔧 Running Cline on {issue['id']}: {issue['title']}")
         
         repo_path = f"repos/{issue['repo'].split('/')[-1]}"

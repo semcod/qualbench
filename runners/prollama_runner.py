@@ -8,16 +8,21 @@ from qualbench.dataset import Issue
 from qualbench.runners import BaseRunner, RunResult
 
 
+# Constants
+DEFAULT_TIMEOUT = 900
+ERROR_SNIPPET_LENGTH = 500
+
+
 class Runner(BaseRunner):
     name = "prollama"
 
-    def setup(self):
+    def setup(self) -> None:
         # Verify prollama is installed
         result = subprocess.run(["prollama", "--version"], capture_output=True, text=True)
         if result.returncode != 0:
             raise RuntimeError("prollama not found. Install: pip install prollama")
 
-    def run(self, issue: Issue, repo_path: str, timeout: int = 900) -> RunResult:
+    def run(self, issue: Issue, repo_path: str, timeout: int = DEFAULT_TIMEOUT) -> RunResult:
         start = time.time()
 
         # Run prollama solve with pyqual quality gates
@@ -39,7 +44,7 @@ class Runner(BaseRunner):
         if result.returncode != 0:
             return RunResult(
                 issue_id=issue.id,
-                error=result.stderr[:500],
+                error=result.stderr[:ERROR_SNIPPET_LENGTH],
                 time_seconds=elapsed,
             )
 
