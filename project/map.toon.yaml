@@ -92,13 +92,13 @@ D:
 Features:
 - ...
     main()
-  runners/cline_runner.py:
-    e: run_cline,main
-    run_cline(repo_path;problem_statement;timeout)
-    main()
   runners/template.py:
     e: run,main
     run(issue;repo_path;timeout)
+    main()
+  runners/cline_runner.py:
+    e: run_cline,main
+    run_cline(repo_path;problem_statement;timeout)
     main()
   qualbench/api.py:
     e: ResultSubmission,LeaderboardEntry,LeaderboardResponse,_load_results,_save_results,submit_result,get_leaderboard,get_result,health_check

@@ -68,13 +68,13 @@
 - **Classes**: 1
 - **File**: `server.py`
 
-### runners.cline_runner
-- **Functions**: 2
-- **File**: `cline_runner.py`
-
 ### runners.template
 - **Functions**: 2
 - **File**: `template.py`
+
+### runners.cline_runner
+- **Functions**: 2
+- **File**: `cline_runner.py`
 
 ### runners.copilot_runner
 - **Functions**: 2
@@ -188,23 +188,23 @@ Main execution flows into the system:
 > Run with timing wrapper.
 - **Calls**: self.reset_repo, time.time, round, self.run, RunResult, time.time, str, time.time
 
+### qualbench.dataset.Dataset.summary
+- **Calls**: set, repos.add, len, sorted, difficulties.get, categories.get, languages.get
+
 ### qualbench.supervisor.SupervisorAI.solve
 > Solve an issue with intelligent routing.
 - **Calls**: print, print, result.get, self.route, RoutingDecision, self._parallel_execute, self._single_execute
 
-### qualbench.dataset.Dataset.summary
-- **Calls**: set, repos.add, len, sorted, difficulties.get, categories.get, languages.get
-
 ### runners.openhands_runner.Runner.run
 - **Calls**: time.time, subprocess.run, self.get_diff, RunResult, time.time, bool, os.environ.get
-
-### qualbench.supervisor.SupervisorAI.analyze_issue
-> Analyze issue complexity to inform routing decision.
-- **Calls**: Dataset.load, next, self._calculate_complexity_score, ValueError, self._estimate_lines, len
 
 ### qualbench.evaluation.evaluate_patch
 > Full evaluation of a single patch.
 - **Calls**: qualbench.evaluation.evaluate_correctness, qualbench.evaluation.evaluate_security, len, qualbench.evaluation.evaluate_quality, EvaluationResult, patch.split
+
+### qualbench.supervisor.SupervisorAI.analyze_issue
+> Analyze issue complexity to inform routing decision.
+- **Calls**: Dataset.load, next, self._calculate_complexity_score, ValueError, self._estimate_lines, len
 
 ## Process Flows
 
@@ -326,14 +326,6 @@ Features:
 - **Methods**: 1
 - **Key Methods**: qualbench.runners.RunResult.to_dict
 
-### qualbench.supervisor.RoutingDecision
-> Decision made by supervisor for an issue.
-- **Methods**: 0
-
-### qualbench.supervisor.ParallelResult
-> Result from parallel execution.
-- **Methods**: 0
-
 ### qualbench.dataset.QualityGates
 > Quality gates for v0 and v1 datasets.
 - **Methods**: 0
@@ -345,6 +337,14 @@ Features:
 - **Methods**: 0
 
 ### qualbench.evaluation.QualityResult
+- **Methods**: 0
+
+### qualbench.supervisor.RoutingDecision
+> Decision made by supervisor for an issue.
+- **Methods**: 0
+
+### qualbench.supervisor.ParallelResult
+> Result from parallel execution.
 - **Methods**: 0
 
 ### qualbench.api.ResultSubmission
@@ -399,11 +399,11 @@ Functions exposed as public API (no underscore prefix):
 - `qualbench.evaluation.evaluate_correctness` - 8 calls
 - `qualbench.runners.BaseRunner.run_timed` - 8 calls
 - `scripts.evaluate.evaluate_security` - 8 calls
-- `qualbench.supervisor.SupervisorAI.solve` - 7 calls
 - `qualbench.dataset.Dataset.summary` - 7 calls
+- `qualbench.supervisor.SupervisorAI.solve` - 7 calls
 - `runners.openhands_runner.Runner.run` - 7 calls
-- `qualbench.supervisor.SupervisorAI.analyze_issue` - 6 calls
 - `qualbench.evaluation.evaluate_patch` - 6 calls
+- `qualbench.supervisor.SupervisorAI.analyze_issue` - 6 calls
 
 ## System Interactions
 
