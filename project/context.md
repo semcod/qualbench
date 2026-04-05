@@ -36,15 +36,15 @@
 - **Functions**: 7
 - **File**: `score.py`
 
-### qualbench.evaluation
-- **Functions**: 6
-- **Classes**: 4
-- **File**: `__init__.py`
-
 ### qualbench.dataset
 - **Functions**: 6
 - **Classes**: 3
 - **File**: `dataset.py`
+
+### qualbench.evaluation
+- **Functions**: 6
+- **Classes**: 4
+- **File**: `__init__.py`
 
 ### scripts.evaluate
 - **Functions**: 6
@@ -314,10 +314,6 @@ Features:
 - **Key Methods**: runners.openhands_runner.Runner.setup, runners.openhands_runner.Runner.run
 - **Inherits**: BaseRunner
 
-### qualbench.evaluation.EvaluationResult
-- **Methods**: 1
-- **Key Methods**: qualbench.evaluation.EvaluationResult.to_dict
-
 ### qualbench.dataset.Issue
 - **Methods**: 1
 - **Key Methods**: qualbench.dataset.Issue.from_dict
@@ -325,6 +321,10 @@ Features:
 ### qualbench.runners.RunResult
 - **Methods**: 1
 - **Key Methods**: qualbench.runners.RunResult.to_dict
+
+### qualbench.evaluation.EvaluationResult
+- **Methods**: 1
+- **Key Methods**: qualbench.evaluation.EvaluationResult.to_dict
 
 ### qualbench.supervisor.RoutingDecision
 > Decision made by supervisor for an issue.
@@ -334,6 +334,10 @@ Features:
 > Result from parallel execution.
 - **Methods**: 0
 
+### qualbench.dataset.QualityGates
+> Quality gates for v0 and v1 datasets.
+- **Methods**: 0
+
 ### qualbench.evaluation.CorrectnessResult
 - **Methods**: 0
 
@@ -341,10 +345,6 @@ Features:
 - **Methods**: 0
 
 ### qualbench.evaluation.QualityResult
-- **Methods**: 0
-
-### qualbench.dataset.QualityGates
-> Quality gates for v0 and v1 datasets.
 - **Methods**: 0
 
 ### qualbench.api.ResultSubmission
@@ -396,8 +396,8 @@ Functions exposed as public API (no underscore prefix):
 - `qualbench.dataset.Dataset.load` - 10 calls
 - `qualbench.evaluation.evaluate_security` - 9 calls
 - `scripts.score.load_human_reviews` - 9 calls
-- `qualbench.evaluation.evaluate_correctness` - 8 calls
 - `qualbench.runners.BaseRunner.run_timed` - 8 calls
+- `qualbench.evaluation.evaluate_correctness` - 8 calls
 - `scripts.evaluate.evaluate_security` - 8 calls
 - `qualbench.supervisor.SupervisorAI.solve` - 7 calls
 - `qualbench.dataset.Dataset.summary` - 7 calls

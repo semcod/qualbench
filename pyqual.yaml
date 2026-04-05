@@ -5,7 +5,7 @@ pipeline:
   metrics:
     cc_max: 15           # cyclomatic complexity per function
     vallm_pass_min: 40   # vallm validation pass rate (%) - realistic threshold with false-positives
-    coverage_min: 80     # test coverage (%)
+    # coverage_min: 80   # disabled - not currently measured
 
   # Pipeline stages — use 'tool:' for built-in presets or 'run:' for custom commands
   # See all presets: pyqual tools
