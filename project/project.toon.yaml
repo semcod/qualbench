@@ -1,4 +1,4 @@
-# qualbench | 94 func | 18f | 4298L | python | 2026-04-05
+# qualbench | 94 func | 18f | 4307L | python | 2026-04-05
 
 HEALTH:
   CC̄=4.0  critical=12 (limit:10)  dup=1  cycles=0
@@ -28,8 +28,8 @@ MODULES[24] (top by size):
   M[qualbench/evaluation/__init__.py] 179L C:4 F:6 CC↑11 D:1 (python)
   M[runners/template.py] 162L C:0 F:2 CC↑10 D:0 (python)
   M[qualbench/dataset.py] 129L C:3 F:6 CC↑3 D:0 (python)
-  M[qualbench/utils/repos.py] 100L C:0 F:3 CC↑6 D:0 (python)
-  M[qualbench/runners/__init__.py] 81L C:2 F:7 CC↑2 D:0 (python)
+  M[qualbench/utils/repos.py] 105L C:0 F:3 CC↑6 D:0 (python)
+  M[qualbench/runners/__init__.py] 85L C:2 F:7 CC↑2 D:0 (python)
   M[runners/prollama_runner.py] 72L C:1 F:2 CC↑3 D:0 (python)
   LANGS: python:22/shell:2
 
@@ -48,4 +48,4 @@ REFACTOR[5]:
   [5] M/M Reduce main fan-out (currently 16)
 
 EVOLUTION:
-  2026-04-05 CC̄=4.0 crit=12 4298L // Automated analysis
+  2026-04-05 CC̄=4.0 crit=12 4307L // Automated analysis

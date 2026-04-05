@@ -1,4 +1,4 @@
-# qualbench | 24f 3824L | shell:2,python:22 | 2026-04-05
+# qualbench | 24f 3833L | shell:2,python:22 | 2026-04-05
 # stats: 94 func | 0 cls | 24 mod | CC̄=4.0 | critical:1 | cycles:0
 # alerts[5]: CC score_tool=19; fan-out main=19; fan-out main=16; fan-out submit=16; fan-out main=15
 # hotspots[5]: main fan=19; submit fan=16; main fan=16; main fan=15; main fan=15
@@ -13,10 +13,10 @@ M[24]:
   qualbench/cli.py,294
   qualbench/dataset.py,129
   qualbench/evaluation/__init__.py,179
-  qualbench/runners/__init__.py,81
+  qualbench/runners/__init__.py,85
   qualbench/supervisor.py,383
   qualbench/utils/__init__.py,0
-  qualbench/utils/repos.py,100
+  qualbench/utils/repos.py,105
   runners/__init__.py,0
   runners/aider_runner.py,204
   runners/cline_runner.py,233
