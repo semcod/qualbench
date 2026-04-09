@@ -186,3 +186,8 @@ def get_result(tool: str, issue_id: str) -> dict:
 @app.get("/health")
 def health_check() -> dict:
     return {"status": "ok", "version": "0.2.0"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

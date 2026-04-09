@@ -1,6 +1,8 @@
 """Tests for QualBench v2 — runner, scoring, dataset, schema."""
 
 import json
+from unittest.mock import patch
+
 import pytest
 from click.testing import CliRunner
 
@@ -187,11 +189,18 @@ class TestCLI:
     def test_cli_version(self, runner):
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
-        assert "0.2" in result.output or "qualbench" in result.output.lower()
+        assert "0.3" in result.output or "qualbench" in result.output.lower()
 
     def test_run_json_output(self, runner):
         """Test that run --json produces valid portable schema."""
-        result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--cwd", "/tmp"])
+        with patch("qualbench.cli.QualBenchRunner") as mock_runner:
+            mock_runner.return_value.run.return_value = QualBenchResult(
+                tool="test", issue_id="LOCAL", quality_score=75,
+                dimensions={"correctness": 100, "security": 80, "quality": 70,
+                           "mergeability": 75, "iterations": 80, "cost": 60},
+                verdict="needs_review", top_issues=[],
+            )
+            result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--cwd", "/tmp"])
         assert result.exit_code == 0
         parsed = json.loads(result.output)
         assert "quality_score" in parsed
@@ -200,26 +209,54 @@ class TestCLI:
 
     def test_run_fail_on_score_pass(self, runner):
         """Test fail_on_score when score is above threshold."""
-        result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "0", "--cwd", "/tmp"])
+        with patch("qualbench.cli.QualBenchRunner") as mock_runner:
+            mock_runner.return_value.run.return_value = QualBenchResult(
+                tool="test", issue_id="LOCAL", quality_score=75,
+                dimensions={"correctness": 100, "security": 80, "quality": 70,
+                           "mergeability": 75, "iterations": 80, "cost": 60},
+                verdict="needs_review", top_issues=[],
+            )
+            result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "0", "--cwd", "/tmp"])
         # Should pass (exit 0) because any score >= 0
         assert result.exit_code == 0
 
     def test_run_fail_on_score_fail(self, runner):
         """Test fail_on_score when score would be below threshold."""
-        result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "100", "--cwd", "/tmp"])
-        # Should fail (exit 1) because no real repo can score 100 with /tmp
+        with patch("qualbench.cli.QualBenchRunner") as mock_runner:
+            mock_runner.return_value.run.return_value = QualBenchResult(
+                tool="test", issue_id="LOCAL", quality_score=75,
+                dimensions={"correctness": 100, "security": 80, "quality": 70,
+                           "mergeability": 75, "iterations": 80, "cost": 60},
+                verdict="needs_review", top_issues=[],
+            )
+            result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "100", "--cwd", "/tmp"])
+        # Should fail (exit 1) because score 75 < threshold 100
         assert result.exit_code == 1
 
     def test_quickstart_command(self, runner):
         """Test quickstart shows report and next steps."""
-        result = runner.invoke(cli, ["quickstart", "--tool", "test"])
+        with patch("qualbench.cli.QualBenchRunner") as mock_runner:
+            mock_runner.return_value.run.return_value = QualBenchResult(
+                tool="test", issue_id="QUICKSTART", quality_score=75,
+                dimensions={"correctness": 100, "security": 80, "quality": 70,
+                           "mergeability": 75, "iterations": 80, "cost": 60},
+                verdict="needs_review", top_issues=[],
+            )
+            result = runner.invoke(cli, ["quickstart", "--tool", "test"])
         assert result.exit_code == 0
         assert "QualBench" in result.output
         assert "Next steps" in result.output or "quickstart" in result.output.lower()
 
     def test_compare_command(self, runner):
         """Test compare command runs and shows score."""
-        result = runner.invoke(cli, ["compare", "my-tool", "--issue", "QB-001"])
+        with patch("qualbench.cli.QualBenchRunner") as mock_runner:
+            mock_runner.return_value.run.return_value = QualBenchResult(
+                tool="my-tool", issue_id="QB-001", quality_score=75,
+                dimensions={"correctness": 100, "security": 80, "quality": 70,
+                           "mergeability": 75, "iterations": 80, "cost": 60},
+                verdict="needs_review", top_issues=[],
+            )
+            result = runner.invoke(cli, ["compare", "my-tool", "--issue", "QB-001"])
         assert result.exit_code == 0
         assert "Comparing" in result.output or "score" in result.output.lower()
 

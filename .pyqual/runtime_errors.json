@@ -1,0 +1,14 @@
+[
+  {
+    "timestamp": "2026-04-05T11:01:41.040861+00:00",
+    "stage": "validate",
+    "command": "vallm batch . --recursive --format toon --output ./project",
+    "tool": "vallm",
+    "returncode": 2,
+    "duration_s": 24.489,
+    "error_type": "unknown",
+    "message": "✓ Results saved to project/validation.toon.yaml",
+    "stdout_tail": "Using .gitignore from .\nExcluded 41282 files by .gitignore\n✓ Results saved to project/validation.toon.yaml\n",
+    "stderr_tail": ""
+  }
+]
