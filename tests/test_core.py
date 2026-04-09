@@ -126,7 +126,7 @@ class TestRunner:
         """Test runner produces valid JSON output."""
         with patch("qualbench.benchmark.QualBenchRunner.run") as mock_run:
             mock_run.return_value = QualBenchResult(
-                tool="test", issue_id="LOCAL", quality_score=75,
+                tool="test", issue_id="LOCAL", quality_score=75.5,
                 dimensions={"correctness": 100, "security": 80, "quality": 70,
                            "mergeability": 75, "iterations": 80, "cost": 60},
                 verdict="needs_review", top_issues=[],
