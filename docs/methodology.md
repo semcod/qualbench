@@ -1,5 +1,7 @@
 # QualBench Methodology
 
+How QualBench evaluates AI-generated code across correctness, security, quality, and mergeability.
+
 ## Why QualBench Exists
 
 Existing benchmarks (SWE-bench, SWE-bench Pro, HumanEval) measure one thing: **correctness**. Does the patch make the failing tests pass without breaking existing ones?
@@ -37,6 +39,8 @@ All repositories have comprehensive test suites, making automated correctness ev
 5. Fix requires non-trivial reasoning (not just a typo)
 
 ## Evaluation Protocol
+
+Standardized procedure for running and scoring benchmarks.
 
 ### Environment
 - Each tool runs in an isolated Docker container

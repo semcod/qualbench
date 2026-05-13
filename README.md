@@ -187,3 +187,20 @@ qualbench run --tool my_tool
 ## License
 
 Licensed under Apache-2.0.
+
+<!-- taskill:status:start -->
+
+## Status
+
+_Last updated by [taskill](https://github.com/oqlos/taskill) at 2026-04-25 13:46 UTC_
+
+| Metric | Value |
+|---|---|
+| HEAD | `c199cf4` |
+| Coverage | — |
+| Failing tests | — |
+| Commits in last cycle | 26 |
+
+> Repository received a mix of fixes, refactors and configuration updates: tests were hardened (mocks added), a JSON test fix was applied, many vallm/style issues and magic numbers were addressed, and release-related features (v0.3.0, Supervisor AI, new runners) were added. PyQual configuration thresholds and gates were adjusted and documentation/TODOs were updated after a PyQual run.
+
+<!-- taskill:status:end -->

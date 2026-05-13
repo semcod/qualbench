@@ -26,11 +26,17 @@ class Runner(BaseRunner):
         # Adapt this to your OpenHands installation
         result = subprocess.run(
             [
-                "python", "-m", "openhands.core.main",
-                "-t", issue.problem_statement,
-                "-d", repo_path,
+                "python",
+                "-m",
+                "openhands.core.main",
+                "-t",
+                issue.problem_statement,
+                "-d",
+                repo_path,
             ],
-            capture_output=True, text=True, timeout=timeout,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
             env={**os.environ},
         )
 

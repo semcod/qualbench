@@ -1,6 +1,5 @@
 """Tests for QualBench API (FastAPI)."""
 
-import json
 import pytest
 from fastapi.testclient import TestClient
 
@@ -54,13 +53,25 @@ class TestSubmitResult:
         assert data["quality_score"] == 85.0
 
     def test_submit_requires_auth(self):
-        result = {"tool": "test", "issue_id": "QB-001", "quality_score": 70, "verdict": "needs_review", "dimensions": {}}
+        result = {
+            "tool": "test",
+            "issue_id": "QB-001",
+            "quality_score": 70,
+            "verdict": "needs_review",
+            "dimensions": {},
+        }
         resp = client.post("/api/v1/results", json=result)
         # Should work with demo-token default
         assert resp.status_code == 201
 
     def test_submit_invalid_verdict(self):
-        result = {"tool": "test", "issue_id": "QB-001", "quality_score": 70, "verdict": "invalid", "dimensions": {}}
+        result = {
+            "tool": "test",
+            "issue_id": "QB-001",
+            "quality_score": 70,
+            "verdict": "invalid",
+            "dimensions": {},
+        }
         resp = client.post(
             "/api/v1/results",
             json=result,
@@ -69,7 +80,13 @@ class TestSubmitResult:
         assert resp.status_code == 422  # Validation error
 
     def test_submit_score_out_of_range(self):
-        result = {"tool": "test", "issue_id": "QB-001", "quality_score": 150, "verdict": "ready_to_merge", "dimensions": {}}
+        result = {
+            "tool": "test",
+            "issue_id": "QB-001",
+            "quality_score": 150,
+            "verdict": "ready_to_merge",
+            "dimensions": {},
+        }
         resp = client.post(
             "/api/v1/results",
             json=result,
@@ -91,7 +108,9 @@ class TestSubmitResult:
         # Submit again with different score
         result["quality_score"] = 90.0
         result["verdict"] = "ready_to_merge"
-        resp = client.post("/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"})
+        resp = client.post(
+            "/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"}
+        )
 
         assert resp.json()["quality_score"] == 90.0
         results = _load_results()
@@ -118,7 +137,9 @@ class TestLeaderboard:
                 "verdict": "needs_review" if score < 85 else "ready_to_merge",
                 "cost_usd": 0.5,
             }
-            client.post("/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"})
+            client.post(
+                "/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"}
+            )
 
         resp = client.get("/api/v1/leaderboard")
         data = resp.json()
@@ -137,7 +158,9 @@ class TestLeaderboard:
                 "dimensions": {},
                 "verdict": "needs_review",
             }
-            client.post("/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"})
+            client.post(
+                "/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"}
+            )
 
         resp = client.get("/api/v1/leaderboard?issue=QB-001")
         data = resp.json()
@@ -153,7 +176,9 @@ class TestLeaderboard:
                 "dimensions": {},
                 "verdict": "needs_review",
             }
-            client.post("/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"})
+            client.post(
+                "/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"}
+            )
 
         resp = client.get("/api/v1/leaderboard?tool=prollama")
         data = resp.json()
@@ -198,7 +223,9 @@ class TestCostEfficiency:
                 "verdict": "not_merge_ready" if score == 0 else "needs_review",
                 "cost_usd": cost,
             }
-            client.post("/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"})
+            client.post(
+                "/api/v1/results", json=result, headers={"Authorization": "Bearer demo-token"}
+            )
 
         resp = client.get("/api/v1/leaderboard")
         data = resp.json()

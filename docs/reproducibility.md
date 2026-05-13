@@ -11,6 +11,8 @@ QualBench results must be fully reproducible. This document describes how to ver
 
 ## Reproduce Published Results
 
+Clone the exact version, install dependencies, and re-run evaluation to verify scores.
+
 ```bash
 # 1. Clone at the exact version tag
 git clone https://github.com/semcod/qualbench.git
@@ -23,14 +25,20 @@ pip install -r requirements.txt
 # 3. Setup repositories at exact commits
 make setup-repos
 
+Clones each repository at the exact commit used in the original benchmark.
+
 # 4. Re-run evaluation on published patches
 make evaluate-auto
+
+Re-executes the full evaluation pipeline on the same patches.
 
 # 5. Compare scores
 python scripts/compare_scores.py \
     --published results/published/scores.json \
     --reproduced results/evaluation.json
 ```
+
+Results should match within floating-point tolerance. Any discrepancy indicates a non-reproducible run.
 
 ## What Gets Logged
 

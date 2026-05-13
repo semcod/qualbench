@@ -1,0 +1,165 @@
+app {
+  name: "qualbench";
+  version: "0.3.1";
+}
+
+interface[type="cli"] {
+  framework: click;
+}
+interface[type="cli"] page[name="qualbench"] {
+
+}
+
+workflow[name="install"] {
+  trigger: "manual";
+  step-1: run cmd=pip install -e ".[test]";
+}
+
+workflow[name="test"] {
+  trigger: "manual";
+  step-1: run cmd=pytest tests/ -v --tb=short;
+}
+
+workflow[name="lint"] {
+  trigger: "manual";
+  step-1: run cmd=ruff check qualbench/ tests/;
+}
+
+workflow[name="quickstart"] {
+  trigger: "manual";
+  step-1: run cmd=qualbench quickstart;
+}
+
+workflow[name="run"] {
+  trigger: "manual";
+  step-1: run cmd=qualbench run --tool prollama;
+}
+
+workflow[name="run-json"] {
+  trigger: "manual";
+  step-1: run cmd=qualbench run --tool prollama --json;
+}
+
+workflow[name="setup-repos"] {
+  trigger: "manual";
+  step-1: run cmd=qualbench setup --dataset $(DATASET);
+}
+
+workflow[name="benchmark"] {
+  trigger: "manual";
+  step-1: depend target=run-copilot;
+  step-2: depend target=run-openhands;
+  step-3: depend target=run-prollama;
+}
+
+workflow[name="run-copilot"] {
+  trigger: "manual";
+  step-1: run cmd=python runners/copilot_runner.py --dataset $(DATASET) --output $(RESULTS_DIR)/copilot/ --timeout $(TIMEOUT);
+}
+
+workflow[name="run-openhands"] {
+  trigger: "manual";
+  step-1: run cmd=python runners/openhands_runner.py --dataset $(DATASET) --output $(RESULTS_DIR)/openhands/ --timeout $(TIMEOUT);
+}
+
+workflow[name="run-prollama"] {
+  trigger: "manual";
+  step-1: run cmd=python runners/prollama_runner.py --dataset $(DATASET) --output $(RESULTS_DIR)/prollama/ --timeout $(TIMEOUT);
+}
+
+workflow[name="run-custom"] {
+  trigger: "manual";
+  step-1: run cmd=test -n "$(TOOL)" || (echo "Usage: make run-custom TOOL=my_tool" && exit 1);
+  step-2: run cmd=python runners/$(TOOL).py --dataset $(DATASET) --output $(RESULTS_DIR)/$(TOOL)/ --timeout $(TIMEOUT);
+}
+
+workflow[name="evaluate"] {
+  trigger: "manual";
+  step-1: run cmd=python scripts/evaluate.py --results-dir $(RESULTS_DIR) --dataset $(DATASET);
+}
+
+workflow[name="leaderboard"] {
+  trigger: "manual";
+  step-1: run cmd=python scripts/score.py --evaluation $(RESULTS_DIR)/evaluation.json --leaderboard LEADERBOARD.md;
+  step-2: run cmd=cat LEADERBOARD.md;
+}
+
+workflow[name="docker-build"] {
+  trigger: "manual";
+  step-1: run cmd=docker build -t semcod/qualbench-action:latest action/;
+}
+
+workflow[name="docker-run"] {
+  trigger: "manual";
+  step-1: run cmd=docker run --rm -v $(PWD):/workspace -w /workspace semcod/qualbench-action:latest;
+}
+
+workflow[name="serve"] {
+  trigger: "manual";
+  step-1: run cmd=python server.py;
+}
+
+workflow[name="serve-api"] {
+  trigger: "manual";
+  step-1: run cmd=uvicorn qualbench.api:app --reload --port 8000;
+}
+
+workflow[name="submit"] {
+  trigger: "manual";
+  step-1: run cmd=qualbench submit --tool prollama;
+}
+
+workflow[name="view-leaderboard"] {
+  trigger: "manual";
+  step-1: run cmd=qualbench leaderboard;
+}
+
+workflow[name="clean"] {
+  trigger: "manual";
+  step-1: run cmd=rm -rf repos/ $(RESULTS_DIR)/ reviews/ dist/ build/ *.egg-info;
+}
+
+workflow[name="fmt"] {
+  trigger: "manual";
+  step-1: run cmd=ruff format .;
+}
+
+workflow[name="build"] {
+  trigger: "manual";
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="health"] {
+  trigger: "manual";
+  step-1: run cmd=docker compose ps;
+  step-2: run cmd=docker compose exec app echo "Health check passed";
+}
+
+workflow[name="import-makefile-hint"] {
+  trigger: "manual";
+  step-1: run cmd=echo 'Run: taskfile import Makefile to import existing targets.';
+}
+
+workflow[name="all"] {
+  trigger: "manual";
+  step-1: run cmd=echo "Running all...";
+}
+
+deploy {
+  target: docker;
+}
+
+environment[name="local"] {
+  runtime: docker;
+  env_file: ".env";
+}
+
+workflow[name="help"] {
+  trigger: "manual";
+  step-1: run cmd=taskfile list;
+}
+
+workflow[name="format"] {
+  trigger: "manual";
+  step-1: run cmd=ruff format .;
+}

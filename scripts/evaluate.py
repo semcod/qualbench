@@ -36,12 +36,12 @@ HIGH_SEVERITY_THRESHOLD = 2
 REPO_PATH_PREFIX = "repos"
 
 
-def run_cmd(cmd: list[str], cwd: str = None, timeout: int = DEFAULT_CMD_TIMEOUT) -> tuple[int, str, str]:
+def run_cmd(
+    cmd: list[str], cwd: str = None, timeout: int = DEFAULT_CMD_TIMEOUT
+) -> tuple[int, str, str]:
     """Run a command and return (returncode, stdout, stderr)."""
     try:
-        result = subprocess.run(
-            cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout
-        )
+        result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         return -1, "", "Timeout"
@@ -107,8 +107,7 @@ def evaluate_security(repo_path: str, baseline_bandit: dict) -> dict:
             score = SCORE_90
     else:
         high_count = sum(
-            1 for r in findings["results"][baseline_count:]
-            if r.get("issue_severity") == "HIGH"
+            1 for r in findings["results"][baseline_count:] if r.get("issue_severity") == "HIGH"
         )
         score = SCORE_0 if high_count >= HIGH_SEVERITY_THRESHOLD else SCORE_30
 
@@ -178,26 +177,30 @@ def evaluate_tool(tool_dir: str, dataset: dict) -> list[dict]:
         result_file = os.path.join(tool_dir, f"{issue_id}.json")
 
         if not os.path.exists(result_file):
-            results.append({
-                "issue_id": issue_id,
-                "skipped": True,
-                "correctness": {"score": 0},
-                "security": {"score": 0},
-                "quality": {"score": 0},
-            })
+            results.append(
+                {
+                    "issue_id": issue_id,
+                    "skipped": True,
+                    "correctness": {"score": 0},
+                    "security": {"score": 0},
+                    "quality": {"score": 0},
+                }
+            )
             continue
 
         with open(result_file) as f:
             tool_result = json.load(f)
 
         if not tool_result.get("patch"):
-            results.append({
-                "issue_id": issue_id,
-                "no_patch": True,
-                "correctness": {"score": 0},
-                "security": {"score": 0},
-                "quality": {"score": 0},
-            })
+            results.append(
+                {
+                    "issue_id": issue_id,
+                    "no_patch": True,
+                    "correctness": {"score": 0},
+                    "security": {"score": 0},
+                    "quality": {"score": 0},
+                }
+            )
             continue
 
         repo_path = os.path.join(REPO_PATH_PREFIX, issue["repo"].replace("/", "__"))
@@ -216,15 +219,17 @@ def evaluate_tool(tool_dir: str, dataset: dict) -> list[dict]:
             len(tool_result["patch"].split("\n")),
         )
 
-        results.append({
-            "issue_id": issue_id,
-            "correctness": correctness,
-            "security": security,
-            "quality": quality,
-            "cost_usd": tool_result.get("cost_usd", 0),
-            "time_seconds": tool_result.get("time_seconds", 0),
-            "iterations": tool_result.get("iterations", 0),
-        })
+        results.append(
+            {
+                "issue_id": issue_id,
+                "correctness": correctness,
+                "security": security,
+                "quality": quality,
+                "cost_usd": tool_result.get("cost_usd", 0),
+                "time_seconds": tool_result.get("time_seconds", 0),
+                "iterations": tool_result.get("iterations", 0),
+            }
+        )
 
     return results
 

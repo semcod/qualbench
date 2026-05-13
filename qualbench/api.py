@@ -45,6 +45,7 @@ HTTP_NOT_FOUND = 404
 
 class ResultSubmission(BaseModel):
     """Result in portable schema format."""
+
     tool: str = Field(..., description="AI tool name")
     issue_id: str = Field(..., description="QualBench issue ID")
     quality_score: float = Field(..., ge=0, le=100)
@@ -190,4 +191,5 @@ def health_check() -> dict:
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

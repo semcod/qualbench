@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from qualbench.dataset import Dataset, Issue
+from qualbench.dataset import Dataset
 from qualbench.benchmark import (
     QualBenchResult,
     QualBenchRunner,
@@ -21,10 +21,19 @@ from qualbench.cli import cli
 class TestQualBenchResult:
     def test_to_dict(self):
         r = QualBenchResult(
-            tool="test", issue_id="QB-001", quality_score=74.123,
-            dimensions={"correctness": 100, "security": 80, "quality": 65,
-                        "mergeability": 75, "iterations": 70, "cost": 90},
-            verdict="needs_review", top_issues=["high_complexity"],
+            tool="test",
+            issue_id="QB-001",
+            quality_score=74.123,
+            dimensions={
+                "correctness": 100,
+                "security": 80,
+                "quality": 65,
+                "mergeability": 75,
+                "iterations": 70,
+                "cost": 90,
+            },
+            verdict="needs_review",
+            top_issues=["high_complexity"],
         )
         d = r.to_dict()
         assert d["quality_score"] == 74.1
@@ -33,10 +42,19 @@ class TestQualBenchResult:
 
     def test_to_json(self):
         r = QualBenchResult(
-            tool="test", issue_id="LOCAL", quality_score=50,
-            dimensions={"correctness": 0, "security": 50, "quality": 50,
-                        "mergeability": 50, "iterations": 50, "cost": 50},
-            verdict="not_merge_ready", top_issues=[],
+            tool="test",
+            issue_id="LOCAL",
+            quality_score=50,
+            dimensions={
+                "correctness": 0,
+                "security": 50,
+                "quality": 50,
+                "mergeability": 50,
+                "iterations": 50,
+                "cost": 50,
+            },
+            verdict="not_merge_ready",
+            top_issues=[],
         )
         parsed = json.loads(r.to_json())
         assert "tool" in parsed
@@ -45,10 +63,19 @@ class TestQualBenchResult:
 
     def test_from_dict(self):
         data = {
-            "tool": "aider", "issue_id": "QB-005", "quality_score": 82,
-            "dimensions": {"correctness": 100, "security": 90, "quality": 70,
-                           "mergeability": 85, "iterations": 85, "cost": 75},
-            "verdict": "needs_review", "top_issues": [],
+            "tool": "aider",
+            "issue_id": "QB-005",
+            "quality_score": 82,
+            "dimensions": {
+                "correctness": 100,
+                "security": 90,
+                "quality": 70,
+                "mergeability": 85,
+                "iterations": 85,
+                "cost": 75,
+            },
+            "verdict": "needs_review",
+            "top_issues": [],
         }
         r = QualBenchResult.from_dict(data)
         assert r.tool == "aider"
@@ -57,13 +84,28 @@ class TestQualBenchResult:
     def test_schema_fields_complete(self):
         """Portable schema must have all required fields."""
         r = QualBenchResult(
-            tool="t", issue_id="QB-001", quality_score=0,
-            dimensions={}, verdict="not_merge_ready", top_issues=[],
+            tool="t",
+            issue_id="QB-001",
+            quality_score=0,
+            dimensions={},
+            verdict="not_merge_ready",
+            top_issues=[],
         )
         d = r.to_dict()
-        required = ["tool", "issue_id", "quality_score", "dimensions",
-                     "verdict", "top_issues", "patch", "resolved",
-                     "cost_usd", "time_seconds", "iterations", "model_used"]
+        required = [
+            "tool",
+            "issue_id",
+            "quality_score",
+            "dimensions",
+            "verdict",
+            "top_issues",
+            "patch",
+            "resolved",
+            "cost_usd",
+            "time_seconds",
+            "iterations",
+            "model_used",
+        ]
         for field in required:
             assert field in d, f"Missing field: {field}"
 
@@ -107,10 +149,19 @@ class TestRunner:
         """Test runner returns valid result structure."""
         with patch("qualbench.benchmark.QualBenchRunner.run") as mock_run:
             mock_run.return_value = QualBenchResult(
-                tool="test-tool", issue_id="TEST-001", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test-tool",
+                issue_id="TEST-001",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
             runner = QualBenchRunner(tool="test-tool", mode="quality", cwd="/tmp")
             result = runner.run("TEST-001")
@@ -126,10 +177,19 @@ class TestRunner:
         """Test runner produces valid JSON output."""
         with patch("qualbench.benchmark.QualBenchRunner.run") as mock_run:
             mock_run.return_value = QualBenchResult(
-                tool="test", issue_id="LOCAL", quality_score=75.5,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test",
+                issue_id="LOCAL",
+                quality_score=75.5,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
             runner = QualBenchRunner(tool="test", cwd="/tmp")
             result = runner.run()
@@ -141,10 +201,19 @@ class TestRunner:
         """Test that runner accepts different modes - mocked for speed."""
         with patch("qualbench.benchmark.QualBenchRunner.run") as mock_run:
             mock_run.return_value = QualBenchResult(
-                tool="test", issue_id="MODE-TEST", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test",
+                issue_id="MODE-TEST",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
                 cost_usd=0.05,
             )
             for mode in ("cheap", "quality", "secure"):
@@ -157,12 +226,26 @@ class TestDataset:
     @pytest.fixture
     def sample_dataset(self, tmp_path):
         data = {
-            "version": "0.2.0", "name": "test", "description": "Test",
+            "version": "0.2.0",
+            "name": "test",
+            "description": "Test",
             "issues": [
-                {"id": "QB-001", "difficulty": "simple", "category": "bug_fix",
-                 "repo": "test/repo", "title": "Bug", "problem_statement": "Fix it"},
-                {"id": "QB-002", "difficulty": "hard", "category": "refactor",
-                 "repo": "test/repo2", "title": "Refactor", "problem_statement": "Extract"},
+                {
+                    "id": "QB-001",
+                    "difficulty": "simple",
+                    "category": "bug_fix",
+                    "repo": "test/repo",
+                    "title": "Bug",
+                    "problem_statement": "Fix it",
+                },
+                {
+                    "id": "QB-002",
+                    "difficulty": "hard",
+                    "category": "refactor",
+                    "repo": "test/repo2",
+                    "title": "Refactor",
+                    "problem_statement": "Extract",
+                },
             ],
         }
         path = tmp_path / "test.json"
@@ -222,10 +305,19 @@ class TestCLI:
         """Test that run --json produces valid portable schema."""
         with patch("qualbench.cli.QualBenchRunner") as mock_runner:
             mock_runner.return_value.run.return_value = QualBenchResult(
-                tool="test", issue_id="LOCAL", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test",
+                issue_id="LOCAL",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
             result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--cwd", "/tmp"])
         assert result.exit_code == 0
@@ -238,12 +330,23 @@ class TestCLI:
         """Test fail_on_score when score is above threshold."""
         with patch("qualbench.cli.QualBenchRunner") as mock_runner:
             mock_runner.return_value.run.return_value = QualBenchResult(
-                tool="test", issue_id="LOCAL", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test",
+                issue_id="LOCAL",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
-            result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "0", "--cwd", "/tmp"])
+            result = runner.invoke(
+                cli, ["run", "--tool", "test", "--json", "--fail-on-score", "0", "--cwd", "/tmp"]
+            )
         # Should pass (exit 0) because any score >= 0
         assert result.exit_code == 0
 
@@ -251,12 +354,23 @@ class TestCLI:
         """Test fail_on_score when score would be below threshold."""
         with patch("qualbench.cli.QualBenchRunner") as mock_runner:
             mock_runner.return_value.run.return_value = QualBenchResult(
-                tool="test", issue_id="LOCAL", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test",
+                issue_id="LOCAL",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
-            result = runner.invoke(cli, ["run", "--tool", "test", "--json", "--fail-on-score", "100", "--cwd", "/tmp"])
+            result = runner.invoke(
+                cli, ["run", "--tool", "test", "--json", "--fail-on-score", "100", "--cwd", "/tmp"]
+            )
         # Should fail (exit 1) because score 75 < threshold 100
         assert result.exit_code == 1
 
@@ -264,10 +378,19 @@ class TestCLI:
         """Test quickstart shows report and next steps."""
         with patch("qualbench.cli.QualBenchRunner") as mock_runner:
             mock_runner.return_value.run.return_value = QualBenchResult(
-                tool="test", issue_id="QUICKSTART", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="test",
+                issue_id="QUICKSTART",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
             result = runner.invoke(cli, ["quickstart", "--tool", "test"])
         assert result.exit_code == 0
@@ -278,10 +401,19 @@ class TestCLI:
         """Test compare command runs and shows score."""
         with patch("qualbench.cli.QualBenchRunner") as mock_runner:
             mock_runner.return_value.run.return_value = QualBenchResult(
-                tool="my-tool", issue_id="QB-001", quality_score=75,
-                dimensions={"correctness": 100, "security": 80, "quality": 70,
-                           "mergeability": 75, "iterations": 80, "cost": 60},
-                verdict="needs_review", top_issues=[],
+                tool="my-tool",
+                issue_id="QB-001",
+                quality_score=75,
+                dimensions={
+                    "correctness": 100,
+                    "security": 80,
+                    "quality": 70,
+                    "mergeability": 75,
+                    "iterations": 80,
+                    "cost": 60,
+                },
+                verdict="needs_review",
+                top_issues=[],
             )
             result = runner.invoke(cli, ["compare", "my-tool", "--issue", "QB-001"])
         assert result.exit_code == 0
@@ -308,10 +440,19 @@ class TestActionIntegration:
         """Verify action can parse runner JSON output."""
         with patch("qualbench.benchmark.QualBenchRunner.run") as mock_run:
             mock_run.return_value = QualBenchResult(
-                tool="action-test", issue_id="TEST-ACTION", quality_score=82,
-                dimensions={"correctness": 100, "security": 85, "quality": 75,
-                           "mergeability": 80, "iterations": 85, "cost": 70},
-                verdict="ready_to_merge", top_issues=[],
+                tool="action-test",
+                issue_id="TEST-ACTION",
+                quality_score=82,
+                dimensions={
+                    "correctness": 100,
+                    "security": 85,
+                    "quality": 75,
+                    "mergeability": 80,
+                    "iterations": 85,
+                    "cost": 70,
+                },
+                verdict="ready_to_merge",
+                top_issues=[],
             )
             runner = QualBenchRunner(tool="action-test", cwd="/tmp")
             result = runner.run("TEST-ACTION")

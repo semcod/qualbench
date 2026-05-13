@@ -14,6 +14,7 @@ DEFAULT_COVERAGE_BASELINE = 70.0
 @dataclass
 class QualityGates:
     """Quality gates for v0 and v1 datasets."""
+
     cc_max: int = DEFAULT_CC_MAX
     no_new_bandit_issues: bool = True
     max_lines_changed: int = DEFAULT_MAX_LINES

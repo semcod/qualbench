@@ -155,9 +155,7 @@ class QualBenchRunner:
         return max(20.0, 100.0 - count * 10)
 
     def _run_quality(self) -> float:
-        rc, stdout, _ = _run(
-            ["python", "-m", "radon", "cc", ".", "-a", "-s", "-j"], cwd=self.cwd
-        )
+        rc, stdout, _ = _run(["python", "-m", "radon", "cc", ".", "-a", "-s", "-j"], cwd=self.cwd)
         try:
             data = json.loads(stdout) if stdout else {}
         except json.JSONDecodeError:
@@ -210,7 +208,9 @@ class QualBenchRunner:
 def _score_iterations(iterations: int, resolved: bool) -> float:
     if not resolved:
         return 0.0
-    return {1: 100, 2: 85, 3: 70}.get(iterations, 50.0 if iterations <= 5 else max(0, 100 - iterations * 12))
+    return {1: 100, 2: 85, 3: 70}.get(
+        iterations, 50.0 if iterations <= 5 else max(0, 100 - iterations * 12)
+    )
 
 
 def _score_cost(cost: float, resolved: bool) -> float:

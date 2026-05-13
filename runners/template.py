@@ -88,8 +88,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run QualBench with your tool")
     parser.add_argument("--dataset", required=True, help="Path to qualbench-v0.json")
     parser.add_argument("--output", required=True, help="Output directory for results")
-    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT, help="Timeout per issue (seconds)")
-    parser.add_argument("--issues", nargs="*", help="Specific issue IDs to run (e.g., QB-001 QB-005)")
+    parser.add_argument(
+        "--timeout", type=int, default=DEFAULT_TIMEOUT, help="Timeout per issue (seconds)"
+    )
+    parser.add_argument(
+        "--issues", nargs="*", help="Specific issue IDs to run (e.g., QB-001 QB-005)"
+    )
     args = parser.parse_args()
 
     with open(args.dataset) as f:
@@ -103,16 +107,16 @@ def main() -> None:
 
     results = []
     for issue in issues:
-        print(f"\n{'='*SEPARATOR_LENGTH}")
+        print(f"\n{'=' * SEPARATOR_LENGTH}")
         print(f"Running: {issue['id']} — {issue['title']}")
         print(f"Repo: {issue['repo']} | Difficulty: {issue['difficulty']}")
-        print(f"{'='*SEPARATOR_LENGTH}\n")
+        print(f"{'=' * SEPARATOR_LENGTH}\n")
 
         repo_path = os.path.join(REPO_PATH_PREFIX, issue["repo"].replace("/", "__"))
 
         if not os.path.isdir(repo_path):
             print(f"  SKIP: repo not found at {repo_path}")
-            print(f"  Run `make setup-repos` first.")
+            print("  Run `make setup-repos` first.")
             continue
 
         # Reset repo to clean state
@@ -141,17 +145,23 @@ def main() -> None:
             json.dump(result, f, indent=2)
 
         status = "RESOLVED" if result["resolved"] else "FAILED"
-        print(f"\n  Result: {status} | Cost: ${result['cost_usd']:.4f} | Time: {result['time_seconds']:.1f}s")
+        print(
+            f"\n  Result: {status} | Cost: ${result['cost_usd']:.4f} | Time: {result['time_seconds']:.1f}s"
+        )
 
     # Save summary
     summary_path = os.path.join(args.output, "summary.json")
     with open(summary_path, "w") as f:
-        json.dump({
-            "tool": Path(__file__).stem,
-            "dataset": "qualbench-v0",
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "results": results,
-        }, f, indent=2)
+        json.dump(
+            {
+                "tool": Path(__file__).stem,
+                "dataset": "qualbench-v0",
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "results": results,
+            },
+            f,
+            indent=2,
+        )
 
     print(f"\nResults saved to {args.output}")
     resolved = sum(1 for r in results if r["resolved"])

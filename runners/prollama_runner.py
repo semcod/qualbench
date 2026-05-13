@@ -28,14 +28,22 @@ class Runner(BaseRunner):
         # Run prollama solve with pyqual quality gates
         result = subprocess.run(
             [
-                "prollama", "solve",
-                "--mode", "quality",
-                "--description", issue.problem_statement,
-                "--repo", repo_path,
-                "--timeout", str(timeout),
-                "--output-format", "json",
+                "prollama",
+                "solve",
+                "--mode",
+                "quality",
+                "--description",
+                issue.problem_statement,
+                "--repo",
+                repo_path,
+                "--timeout",
+                str(timeout),
+                "--output-format",
+                "json",
             ],
-            capture_output=True, text=True, timeout=timeout,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
             env={**os.environ, "PROLLAMA_STRATEGY": "cost-optimized"},
         )
 
@@ -53,6 +61,7 @@ class Runner(BaseRunner):
 
         # Parse prollama output for cost/iterations
         import json
+
         try:
             output = json.loads(result.stdout)
             cost = output.get("total_cost", 0.0)

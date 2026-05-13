@@ -372,6 +372,8 @@ Re-run QualBench with taskinity mode vs prollama quality mode. Publish cost per 
 
 ## Phase 5: Enterprise + ecosystem (weeks 20–28, 125h)
 
+Usage metering, partner integrations, and enterprise onboarding.
+
 ### 5.1 Usage metering + upsell engine (weeks 20–21, 22h)
 
 UsageEvent model tracking every proxy request, task solve, and anonymization event. Stats service with monthly summaries. Dashboard with charts.
@@ -396,6 +398,8 @@ Phase 5 milestone (week 28): 5–10 enterprise demos/PoCs. First $15K+ annual co
 
 
 ## Phase 6: API ecosystem + community (Q1 2027, weeks 29–36)
+
+SDKs, IDE plugins, and community building around the QualBench API.
 
 ### 6.1 SDK for Python and TypeScript (weeks 29–30)
 
@@ -443,6 +447,8 @@ Full TypeScript/JavaScript AST anonymization (8h). Java, Go, Rust tree-sitter gr
 
 ## Risk register (updated)
 
+Key risks with probability, impact, and mitigation strategies.
+
 ### Risk 1: QualBench results are marginal
 Probability: 30%. Impact: high. Mitigation: pivot framing to cost per mergeable PR. Even if quality scores are similar, the cost story may be 10x different.
 
@@ -460,6 +466,8 @@ Probability: 60%. Impact: high. Mitigation: this plan explicitly lists what got 
 
 
 ## Metrics that matter
+
+Leading and lagging indicators to track product success.
 
 ### Distribution (leading indicators)
 - GitHub Action installs (target: 100 by week 16)

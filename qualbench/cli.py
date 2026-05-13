@@ -70,10 +70,14 @@ def _print_report(result: QualBenchResult):
         click.echo(f"     ❌ Quality:      {d['quality']:.0f} — high complexity")
 
     # Mergeability
-    click.echo(f"     {'✔' if d['mergeability'] >= MERGEABILITY_THRESHOLD else '⚠'} Mergeability:  {d['mergeability']:.0f}")
+    click.echo(
+        f"     {'✔' if d['mergeability'] >= MERGEABILITY_THRESHOLD else '⚠'} Mergeability:  {d['mergeability']:.0f}"
+    )
 
     # Iterations
-    click.echo(f"     {'✔' if result.iterations <= MAX_ACCEPTABLE_ITERATIONS else '⚠'} Iterations:    {result.iterations}")
+    click.echo(
+        f"     {'✔' if result.iterations <= MAX_ACCEPTABLE_ITERATIONS else '⚠'} Iterations:    {result.iterations}"
+    )
 
     # Cost
     click.echo(f"     💲 Cost:         ${result.cost_usd:.2f}")
@@ -100,8 +104,12 @@ def cli() -> None:
 @cli.command()
 @click.option("--tool", "-t", default="prollama", help="AI tool name (explicit, no auto-detect)")
 @click.option("--mode", "-m", default="quality", type=click.Choice(["cheap", "quality", "secure"]))
-@click.option("--issue", "-i", default="LOCAL", help="Issue ID (e.g. QB-001) or LOCAL for current diff")
-@click.option("--json-output", "--json", "use_json", is_flag=True, help="Output portable JSON schema")
+@click.option(
+    "--issue", "-i", default="LOCAL", help="Issue ID (e.g. QB-001) or LOCAL for current diff"
+)
+@click.option(
+    "--json-output", "--json", "use_json", is_flag=True, help="Output portable JSON schema"
+)
 @click.option("--cwd", default=".", help="Repository path")
 @click.option("--fail-on-score", type=int, default=None, help="Exit code 1 if score below this")
 def run(tool, mode, issue, use_json, cwd, fail_on_score) -> None:
@@ -117,7 +125,8 @@ def run(tool, mode, issue, use_json, cwd, fail_on_score) -> None:
     if fail_on_score is not None and result.quality_score < fail_on_score:
         click.secho(
             f"   ❌ Score {result.quality_score:.0f} < threshold {fail_on_score}",
-            fg="red", bold=True,
+            fg="red",
+            bold=True,
         )
         sys.exit(1)
 
@@ -128,7 +137,7 @@ def quickstart(tool) -> None:
     """Run one issue, show your first score in 60 seconds."""
     click.secho("🚀 QualBench Quickstart", bold=True)
     click.echo(f"   Tool: {tool}")
-    click.echo(f"   Scoring current repository...")
+    click.echo("   Scoring current repository...")
     click.echo()
 
     runner = QualBenchRunner(tool=tool, mode="quality", cwd=".")
@@ -182,7 +191,12 @@ def info(dataset) -> None:
 def doctor() -> None:
     """Check if required tools are available."""
     tools = {"python": "Python", "git": "Git", "docker": "Docker (optional)"}
-    modules = {"pytest": "Test runner", "bandit": "Security scanner", "radon": "Complexity", "ruff": "Linter"}
+    modules = {
+        "pytest": "Test runner",
+        "bandit": "Security scanner",
+        "radon": "Complexity",
+        "ruff": "Linter",
+    }
 
     click.echo("System tools:")
     for tool, desc in tools.items():
@@ -205,8 +219,18 @@ def doctor() -> None:
 @click.option("--mode", "-m", default="quality", type=click.Choice(["cheap", "quality", "secure"]))
 @click.option("--issue", "-i", default="LOCAL", help="Issue ID to submit for")
 @click.option("--api-url", default="http://localhost:8000", help="Leaderboard API URL")
-@click.option("--token", envvar="QUALBENCH_API_TOKEN", default="demo-token", help="API token (or set QUALBENCH_API_TOKEN)")
-@click.option("--json-file", "-f", type=click.Path(exists=True), help="Submit from JSON file instead of running")
+@click.option(
+    "--token",
+    envvar="QUALBENCH_API_TOKEN",
+    default="demo-token",
+    help="API token (or set QUALBENCH_API_TOKEN)",
+)
+@click.option(
+    "--json-file",
+    "-f",
+    type=click.Path(exists=True),
+    help="Submit from JSON file instead of running",
+)
 def submit(tool, mode, issue, api_url, token, json_file) -> None:
     """Submit benchmark result to leaderboard."""
     click.secho("📤 Submitting to QualBench Leaderboard", bold=True)
@@ -272,7 +296,13 @@ def leaderboard(api_url, issue, tool) -> None:
         click.echo()
         click.echo("   By Quality Score:")
         for i, entry in enumerate(data["by_quality"][:10], 1):
-            icon = "✔" if entry["verdict"] == "ready_to_merge" else "⚠" if entry["verdict"] == "needs_review" else "❌"
+            icon = (
+                "✔"
+                if entry["verdict"] == "ready_to_merge"
+                else "⚠"
+                if entry["verdict"] == "needs_review"
+                else "❌"
+            )
             click.echo(f"      {i}. {entry['tool']}: {entry['quality_score']:.0f} {icon}")
 
         click.echo()

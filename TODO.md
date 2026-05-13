@@ -67,3 +67,9 @@
 ---
 
 *To execute all tasks, run: `prefact -a --execute-todos`*
+
+## Discovered
+
+- pyproject.toml:32 - Outdated dependency: click 8.3.1 → 8.3.2 (wheel)
+- pyproject.toml:35 - Outdated dependency: ruff 0.14.14 → 0.15.9 (wheel)
+- pyproject.toml:39 - Outdated dependency: uvicorn 0.42.0 → 0.43.0 (wheel)

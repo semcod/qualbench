@@ -1,6 +1,10 @@
 # Publishing Guide
 
+How to publish QualBench releases to PyPI, Docker Hub, and GitHub.
+
 ## PyPI (pip install qualbench)
+
+Publish the package to PyPI for public distribution.
 
 ### Automatic (via GitHub Actions)
 
@@ -15,6 +19,8 @@
 
 ### Manual (for testing)
 
+Build and upload packages manually for pre-release verification.
+
 ```bash
 # Build
 pip install build twine
@@ -22,6 +28,8 @@ python -m build
 
 # Check
 twine check dist/*
+
+Verify the package passes all checks before uploading.
 
 # Test PyPI
 twine upload --repository testpypi dist/*
@@ -32,11 +40,15 @@ twine upload dist/*
 
 ## Docker Hub
 
+Publish the GitHub Action Docker image for CI integration.
+
 ### Automatic (via GitHub Actions)
 
 Pushes to `main` automatically build and push to Docker Hub.
 
 ### Manual
+
+Build and push Docker images manually for testing.
 
 ```bash
 # Build

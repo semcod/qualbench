@@ -111,13 +111,22 @@ def score_tool(tool_name: str, evaluations: list[dict], human_reviews: dict) -> 
         issue_id = ev["issue_id"]
 
         if ev.get("skipped") or ev.get("no_patch"):
-            issue_scores.append({
-                "issue_id": issue_id,
-                "correctness": 0, "security": 0, "quality": 0,
-                "mergeability": 0, "iterations": 0, "cost": 0,
-                "quality_score": 0, "resolved": False,
-                "cost_usd": 0, "time_seconds": 0, "iteration_count": 0,
-            })
+            issue_scores.append(
+                {
+                    "issue_id": issue_id,
+                    "correctness": 0,
+                    "security": 0,
+                    "quality": 0,
+                    "mergeability": 0,
+                    "iterations": 0,
+                    "cost": 0,
+                    "quality_score": 0,
+                    "resolved": False,
+                    "cost_usd": 0,
+                    "time_seconds": 0,
+                    "iteration_count": 0,
+                }
+            )
             continue
 
         resolved = ev["correctness"]["score"] == 100
@@ -144,20 +153,22 @@ def score_tool(tool_name: str, evaluations: list[dict], human_reviews: dict) -> 
             + cost_score * WEIGHTS["cost"]
         )
 
-        issue_scores.append({
-            "issue_id": issue_id,
-            "correctness": round(correctness, 1),
-            "security": round(security, 1),
-            "quality": round(quality, 1),
-            "mergeability": round(mergeability, 1),
-            "iterations": round(iterations_score, 1),
-            "cost": round(cost_score, 1),
-            "quality_score": round(quality_score, 1),
-            "resolved": resolved,
-            "cost_usd": cost_usd,
-            "time_seconds": ev.get("time_seconds", 0),
-            "iteration_count": iteration_count,
-        })
+        issue_scores.append(
+            {
+                "issue_id": issue_id,
+                "correctness": round(correctness, 1),
+                "security": round(security, 1),
+                "quality": round(quality, 1),
+                "mergeability": round(mergeability, 1),
+                "iterations": round(iterations_score, 1),
+                "cost": round(cost_score, 1),
+                "quality_score": round(quality_score, 1),
+                "resolved": resolved,
+                "cost_usd": cost_usd,
+                "time_seconds": ev.get("time_seconds", 0),
+                "iteration_count": iteration_count,
+            }
+        )
 
     total = len(issue_scores)
     resolved_count = sum(1 for s in issue_scores if s["resolved"])
@@ -177,7 +188,9 @@ def score_tool(tool_name: str, evaluations: list[dict], human_reviews: dict) -> 
         "mergeable": f"{mergeable_count}/{total}",
         "avg_quality_score": round(avg_score, 1),
         "avg_cost_per_task": round(avg_cost, 4),
-        "cost_per_mergeable_pr": round(cost_per_mergeable, 4) if cost_per_mergeable != float("inf") else "N/A",
+        "cost_per_mergeable_pr": round(cost_per_mergeable, 4)
+        if cost_per_mergeable != float("inf")
+        else "N/A",
         "avg_iterations": round(avg_iterations, 1),
         "issues": issue_scores,
     }
@@ -188,7 +201,7 @@ def generate_leaderboard(scores: dict) -> str:
         "# QualBench leaderboard",
         "",
         f"*Updated: {datetime.now().strftime('%Y-%m-%d')}*",
-        f"*Dataset: QualBench v0 (10 issues) | [Methodology](docs/methodology.md)*",
+        "*Dataset: QualBench v0 (10 issues) | [Methodology](docs/methodology.md)*",
         "",
         "## Rankings by Quality Score",
         "",
@@ -207,13 +220,15 @@ def generate_leaderboard(scores: dict) -> str:
             f"| {tool['avg_iterations']} | {cpm_str} |"
         )
 
-    lines.extend([
-        "",
-        "## Rankings by cost per mergeable PR",
-        "",
-        "| Rank | Tool | Cost/Mergeable PR | Quality Score | Mergeable |",
-        "|------|------|:-----------------:|:------------:|:---------:|",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Rankings by cost per mergeable PR",
+            "",
+            "| Rank | Tool | Cost/Mergeable PR | Quality Score | Mergeable |",
+            "|------|------|:-----------------:|:------------:|:---------:|",
+        ]
+    )
 
     cost_sorted = sorted(
         [t for t in sorted_tools if isinstance(t["cost_per_mergeable_pr"], (int, float))],
@@ -225,11 +240,13 @@ def generate_leaderboard(scores: dict) -> str:
             f"| {tool['avg_quality_score']} | {tool['mergeable']} |"
         )
 
-    lines.extend([
-        "",
-        "## Per-issue breakdown",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Per-issue breakdown",
+            "",
+        ]
+    )
 
     for tool in sorted_tools:
         lines.append(f"### {tool['tool']}")
@@ -246,13 +263,15 @@ def generate_leaderboard(scores: dict) -> str:
             )
         lines.append("")
 
-    lines.extend([
-        "---",
-        "",
-        "[Submit your tool](https://github.com/semcod/qualbench#adding-your-tool) to the leaderboard.",
-        "",
-        "Built by [Softreck](https://softreck.com). Powered by [pyqual](https://github.com/semcod/pyqual).",
-    ])
+    lines.extend(
+        [
+            "---",
+            "",
+            "[Submit your tool](https://github.com/semcod/qualbench#adding-your-tool) to the leaderboard.",
+            "",
+            "Built by [Softreck](https://softreck.com). Powered by [pyqual](https://github.com/semcod/pyqual).",
+        ]
+    )
 
     return "\n".join(lines)
 

@@ -95,7 +95,9 @@ def evaluate_correctness(patch: str, repo_path: str) -> CorrectnessResult:
     if rc != 0:
         return CorrectnessResult(score=0, patch_applies=False, tests_pass=False, error=stderr[:500])
 
-    rc, stdout, stderr = _run(["python", "-m", "pytest", "--tb=short", "-q"], cwd=repo_path, timeout=300)
+    rc, stdout, stderr = _run(
+        ["python", "-m", "pytest", "--tb=short", "-q"], cwd=repo_path, timeout=300
+    )
     return CorrectnessResult(
         score=100 if rc == 0 else 0,
         patch_applies=True,
@@ -121,13 +123,19 @@ def evaluate_security(repo_path: str, baseline_count: int = 0) -> SecurityResult
         sevs = [r.get("issue_severity", "LOW") for r in findings["results"][baseline_count:]]
         score = 40 if "HIGH" in sevs else (70 if "MEDIUM" in sevs else 90)
     else:
-        highs = sum(1 for r in findings["results"][baseline_count:] if r.get("issue_severity") == "HIGH")
+        highs = sum(
+            1 for r in findings["results"][baseline_count:] if r.get("issue_severity") == "HIGH"
+        )
         score = 0 if highs >= 2 else 30
 
-    return SecurityResult(score=score, baseline_issues=baseline_count, current_issues=current, new_issues=new)
+    return SecurityResult(
+        score=score, baseline_issues=baseline_count, current_issues=current, new_issues=new
+    )
 
 
-def evaluate_quality(repo_path: str, baseline_cc: float = 5.0, patch_lines: int = 0) -> QualityResult:
+def evaluate_quality(
+    repo_path: str, baseline_cc: float = 5.0, patch_lines: int = 0
+) -> QualityResult:
     """Measure CC delta and dead code."""
     _, stdout, _ = _run(["python", "-m", "radon", "cc", ".", "-a", "-s", "-j"], cwd=repo_path)
     try:
@@ -138,13 +146,17 @@ def evaluate_quality(repo_path: str, baseline_cc: float = 5.0, patch_lines: int 
     all_cc = []
     for funcs in data.values():
         if isinstance(funcs, list):
-            all_cc.extend(f["complexity"] for f in funcs if isinstance(f, dict) and "complexity" in f)
+            all_cc.extend(
+                f["complexity"] for f in funcs if isinstance(f, dict) and "complexity" in f
+            )
 
     current_cc = sum(all_cc) / len(all_cc) if all_cc else 0
     cc_delta = current_cc - baseline_cc
     cc_score = max(0, 100 - int(max(0, cc_delta) * 15))
 
-    _, ruff_out, _ = _run(["python", "-m", "ruff", "check", ".", "--select", "F841,F811"], cwd=repo_path)
+    _, ruff_out, _ = _run(
+        ["python", "-m", "ruff", "check", ".", "--select", "F841,F811"], cwd=repo_path
+    )
     dead_code = ruff_out.strip().count("\n") + (1 if ruff_out.strip() else 0) if ruff_out else 0
 
     score = max(0, cc_score - dead_code * 10)
@@ -158,10 +170,16 @@ def evaluate_quality(repo_path: str, baseline_cc: float = 5.0, patch_lines: int 
     )
 
 
-def evaluate_patch(issue_id: str, patch: str, repo_path: str,
-                   baseline_cc: float = 5.0, baseline_bandit: int = 0,
-                   cost_usd: float = 0, time_seconds: float = 0,
-                   iterations: int = 1) -> EvaluationResult:
+def evaluate_patch(
+    issue_id: str,
+    patch: str,
+    repo_path: str,
+    baseline_cc: float = 5.0,
+    baseline_bandit: int = 0,
+    cost_usd: float = 0,
+    time_seconds: float = 0,
+    iterations: int = 1,
+) -> EvaluationResult:
     """Full evaluation of a single patch."""
     correctness = evaluate_correctness(patch, repo_path)
     security = evaluate_security(repo_path, baseline_bandit)

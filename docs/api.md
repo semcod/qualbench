@@ -13,17 +13,31 @@ Minimal FastAPI service for submitting and querying benchmark results. Part of P
 
 ## Quick Start
 
+Start the API server and interact with it via CLI or curl.
+
+Start the server, then submit a result and view the leaderboard:
+
 ```bash
-# Start API server
 make serve-api
-# Or: uvicorn qualbench.api:app --reload --port 8000
+```
 
-# In another terminal, submit a result
+Or use uvicorn directly:
+
+```bash
+uvicorn qualbench.api:app --reload --port 8000
+```
+
+Submit a result from another terminal:
+
+```bash
 qualbench submit --tool prollama --issue QB-001
+```
 
-# View leaderboard
+View the leaderboard via CLI or curl:
+
+```bash
 qualbench leaderboard
-# Or: curl http://localhost:8000/api/v1/leaderboard
+curl http://localhost:8000/api/v1/leaderboard
 ```
 
 ## Authentication
@@ -38,6 +52,8 @@ qualbench submit --token $QUALBENCH_API_TOKEN
 Or use default `demo-token` for local development.
 
 ## Submit Result
+
+Submit a benchmark result via the CLI. The CLI handles authentication and result formatting automatically.
 
 ```bash
 # Run benchmark and submit
@@ -84,6 +100,8 @@ qualbench submit --json-file results/prollama/QB-001.json
 
 ## Get Leaderboard
 
+Retrieve current rankings sorted by quality score and cost efficiency.
+
 ```bash
 curl http://localhost:8000/api/v1/leaderboard
 ```
@@ -105,6 +123,8 @@ curl http://localhost:8000/api/v1/leaderboard
 ```
 
 ### Filtering
+
+Filter leaderboard results by issue ID or tool name.
 
 ```bash
 # Filter by issue
@@ -133,6 +153,8 @@ uvicorn qualbench.api:app
 
 ## Deployment
 
+Deploy the leaderboard API using Docker or manual configuration.
+
 ### Docker
 
 ```dockerfile
@@ -153,6 +175,8 @@ CMD ["uvicorn", "qualbench.api:app", "--host", "0.0.0.0", "--port", "8000"]
 | `QUALBENCH_API_TOKEN` | `demo-token` | Auth token |
 
 ## Python Client
+
+Use the Python API to run benchmarks and submit results programmatically.
 
 ```python
 from qualbench.benchmark import QualBenchRunner

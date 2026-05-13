@@ -64,9 +64,7 @@ class BaseRunner(ABC):
 
     def get_diff(self, repo_path: str) -> str:
         """Get git diff of current changes."""
-        result = subprocess.run(
-            ["git", "diff"], cwd=repo_path, capture_output=True, text=True
-        )
+        result = subprocess.run(["git", "diff"], cwd=repo_path, capture_output=True, text=True)
         return result.stdout
 
     def run_timed(self, issue: Issue, repo_path: str, timeout: int = DEFAULT_TIMEOUT) -> RunResult:

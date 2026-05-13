@@ -36,7 +36,8 @@ def clone_repo(repo: str, target: Path, commit: str = None) -> bool:
     print(f"  Cloning {url}...")
     result = subprocess.run(
         ["git", "clone", "--depth", str(CLONE_DEPTH), url, str(target)],
-        capture_output=True, text=True,
+        capture_output=True,
+        text=True,
     )
     if result.returncode != 0:
         print(f"  ERROR: {result.stderr[:ERROR_SNIPPET_LENGTH]}")
@@ -55,7 +56,9 @@ def collect_baseline(repo_path: Path) -> dict:
     # Cyclomatic complexity
     result = subprocess.run(
         ["python", "-m", "radon", "cc", ".", "-a", "-s", "-n", "C"],
-        cwd=str(repo_path), capture_output=True, text=True,
+        cwd=str(repo_path),
+        capture_output=True,
+        text=True,
     )
     for line in result.stdout.strip().split("\n"):
         if line.startswith("Average complexity:"):
@@ -67,10 +70,13 @@ def collect_baseline(repo_path: Path) -> dict:
     # Bandit findings
     result = subprocess.run(
         ["python", "-m", "bandit", "-r", ".", "-f", "json", "-q"],
-        cwd=str(repo_path), capture_output=True, text=True,
+        cwd=str(repo_path),
+        capture_output=True,
+        text=True,
     )
     try:
         import json
+
         data = json.loads(result.stdout) if result.stdout else {"results": []}
         baseline["bandit_count"] = len(data.get("results", []))
     except Exception:
@@ -99,7 +105,7 @@ def setup_repos(dataset: Dataset, output_dir: str = "repos/") -> dict:
             "cloned": success,
         }
         if success:
-            print(f"  Collecting baseline metrics...")
+            print("  Collecting baseline metrics...")
             results[repo]["baseline"] = collect_baseline(target)
 
     return results

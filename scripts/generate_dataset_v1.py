@@ -26,7 +26,7 @@ DATASET_V1 = {
         "repositories": 12,
         "languages": ["Python", "TypeScript"],
     },
-    "issues": []
+    "issues": [],
 }
 
 # Python issues (35 total: 10 existing + 25 new)
@@ -42,9 +42,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When a route exists but the HTTP method is not allowed, Flask returns a generic 405 response without invoking any registered error handler. Users who register `@app.errorhandler(405)` expect their custom handler to be called, but it is bypassed when the MethodNotAllowed exception is raised by the routing layer.",
         "expected_fix": "Ensure MethodNotAllowed exceptions from the router pass through the app's error handler dispatch.",
         "evaluation": {
-            "tests_required": ["test_405_custom_handler", "test_405_default_still_works", "test_method_not_allowed_with_valid_methods"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30}
-        }
+            "tests_required": [
+                "test_405_custom_handler",
+                "test_405_default_still_works",
+                "test_method_not_allowed_with_valid_methods",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30},
+        },
     },
     {
         "id": "QB-002",
@@ -56,9 +60,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When a server returns a response with a UTF-8 BOM but does not declare charset in Content-Type header, requests falls back to apparent_encoding which sometimes detects incorrectly.",
         "expected_fix": "Check for BOM bytes at the start of response content before falling back to apparent_encoding.",
         "evaluation": {
-            "tests_required": ["test_bom_utf8_detection", "test_no_bom_fallback_unchanged", "test_bom_utf16_detection"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20}
-        }
+            "tests_required": [
+                "test_bom_utf8_detection",
+                "test_no_bom_fallback_unchanged",
+                "test_bom_utf16_detection",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20},
+        },
     },
     {
         "id": "QB-003",
@@ -70,9 +78,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When declaring a query parameter with `Query(ge=0)`, FastAPI should reject negative integer values. However, when passed as string like `?page=-1`, validation passes.",
         "expected_fix": "Ensure Query parameter validators apply ge/le/gt/lt constraints consistently.",
         "evaluation": {
-            "tests_required": ["test_negative_query_param_rejected", "test_zero_query_param_accepted", "test_positive_query_param_accepted"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_negative_query_param_rejected",
+                "test_zero_query_param_accepted",
+                "test_positive_query_param_accepted",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-004",
@@ -84,9 +96,14 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `|escape` filter on a variable marked safe with `mark_safe()`, it should re-escape. Inside nested `{% block %}` tags, `|escape` is silently ignored for mark_safe'd content.",
         "expected_fix": "Fix template engine's escape filter to consistently apply escaping regardless of block inheritance context.",
         "evaluation": {
-            "tests_required": ["test_escape_mark_safe_in_block", "test_escape_mark_safe_top_level", "test_autoescape_still_works", "test_nested_block_escape"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 40}
-        }
+            "tests_required": [
+                "test_escape_mark_safe_in_block",
+                "test_escape_mark_safe_top_level",
+                "test_autoescape_still_works",
+                "test_nested_block_escape",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 40},
+        },
     },
     {
         "id": "QB-005",
@@ -98,9 +115,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `httpx.AsyncClient` with `Limits(max_connections=10)` and all connections are in use, new requests should wait up to `pool_timeout` seconds. Instead, requests wait indefinitely.",
         "expected_fix": "Implement timeout enforcement in the connection pool acquisition path.",
         "evaluation": {
-            "tests_required": ["test_pool_timeout_fires", "test_pool_timeout_zero_immediate", "test_pool_connection_released_reused"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 50}
-        }
+            "tests_required": [
+                "test_pool_timeout_fires",
+                "test_pool_timeout_zero_immediate",
+                "test_pool_connection_released_reused",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 50},
+        },
     },
     {
         "id": "QB-006",
@@ -112,9 +133,14 @@ PYTHON_ISSUES = [
         "problem_statement": "When a Pydantic model has a self-referential field, calling `.model_dump()` on a deeply nested instance causes a `RecursionError` with no clear indication of what went wrong.",
         "expected_fix": "Add max_depth parameter to model_dump() and model_dump_json() with a clear error when exceeded.",
         "evaluation": {
-            "tests_required": ["test_recursive_dump_with_max_depth", "test_recursive_dump_error_message", "test_non_recursive_unaffected", "test_max_depth_json"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 60}
-        }
+            "tests_required": [
+                "test_recursive_dump_with_max_depth",
+                "test_recursive_dump_error_message",
+                "test_non_recursive_unaffected",
+                "test_max_depth_json",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 60},
+        },
     },
     {
         "id": "QB-007",
@@ -126,9 +152,18 @@ PYTHON_ISSUES = [
         "problem_statement": "Flask's `app.py` contains error handling logic tightly coupled with blueprint registration. The error handling code is spread across multiple methods making customization difficult.",
         "expected_fix": "New module `flask/error_handling.py` with `ErrorDispatcher` class. All existing tests must pass.",
         "evaluation": {
-            "tests_required": ["test_all_existing_error_tests_pass", "test_error_dispatcher_class_exists", "test_blueprint_error_isolation"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 200}
-        }
+            "tests_required": [
+                "test_all_existing_error_tests_pass",
+                "test_error_dispatcher_class_exists",
+                "test_blueprint_error_isolation",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 200,
+            },
+        },
     },
     {
         "id": "QB-008",
@@ -140,9 +175,17 @@ PYTHON_ISSUES = [
         "problem_statement": "Starlette's middleware stack `build_middleware_stack` has grown to CC > 15 with nested conditionals for different middleware types.",
         "expected_fix": "Refactor build_middleware_stack to use strategy pattern. CC must drop below 10.",
         "evaluation": {
-            "tests_required": ["test_all_existing_middleware_tests_pass", "test_cc_below_threshold"],
-            "quality_gates": {"cc_max": 10, "cc_before_must_be_higher": True, "no_new_bandit_issues": True, "max_lines_changed": 150}
-        }
+            "tests_required": [
+                "test_all_existing_middleware_tests_pass",
+                "test_cc_below_threshold",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_before_must_be_higher": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 150,
+            },
+        },
     },
     {
         "id": "QB-009",
@@ -154,9 +197,18 @@ PYTHON_ISSUES = [
         "problem_statement": "FastAPI's OpenAPI schema generation interpolates path parameters into example URLs without sanitization. A malicious path parameter value containing JavaScript is rendered unsanitized in Swagger UI.",
         "expected_fix": "Escape path parameter examples in OpenAPI schema generation. Add CSP headers to docs endpoints.",
         "evaluation": {
-            "tests_required": ["test_path_param_xss_escaped", "test_openapi_schema_safe_output", "test_swagger_ui_csp_header"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "must_fix_bandit_issue": True, "max_lines_changed": 40}
-        }
+            "tests_required": [
+                "test_path_param_xss_escaped",
+                "test_openapi_schema_safe_output",
+                "test_swagger_ui_csp_header",
+            ],
+            "quality_gates": {
+                "cc_max": 8,
+                "no_new_bandit_issues": True,
+                "must_fix_bandit_issue": True,
+                "max_lines_changed": 40,
+            },
+        },
     },
     {
         "id": "QB-010",
@@ -168,11 +220,19 @@ PYTHON_ISSUES = [
         "problem_statement": "Django admin changelist view reflects filter parameter names in page HTML without proper escaping. Crafted URL can render script tags.",
         "expected_fix": "Escape filter parameter names in admin changelist template. Add test for XSS in filter params.",
         "evaluation": {
-            "tests_required": ["test_admin_filter_xss_escaped", "test_admin_filter_normal_still_works", "test_admin_filter_unicode_safe"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "must_fix_bandit_issue": True, "max_lines_changed": 30}
-        }
+            "tests_required": [
+                "test_admin_filter_xss_escaped",
+                "test_admin_filter_normal_still_works",
+                "test_admin_filter_unicode_safe",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "no_new_bandit_issues": True,
+                "must_fix_bandit_issue": True,
+                "max_lines_changed": 30,
+            },
+        },
     },
-    
     # ===== NEW PYTHON ISSUES (25 more) =====
     # Simple bug fixes (QB-011 to QB-020)
     {
@@ -185,9 +245,13 @@ PYTHON_ISSUES = [
         "problem_statement": "Poetry fails to parse version constraints like `^1.0.0-alpha` correctly, treating pre-release as incompatible with caret constraints.",
         "expected_fix": "Update version parser to handle pre-release versions in caret/tilde constraints.",
         "evaluation": {
-            "tests_required": ["test_caret_with_prerelease", "test_tilde_with_prerelease", "test_normal_versions_unchanged"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_caret_with_prerelease",
+                "test_tilde_with_prerelease",
+                "test_normal_versions_unchanged",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-012",
@@ -199,9 +263,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When calling `self.retry(countdown=0)`, the task is not retried immediately but scheduled with a delay, causing unexpected latency.",
         "expected_fix": "Detect countdown=0 and retry synchronously without scheduling overhead.",
         "evaluation": {
-            "tests_required": ["test_retry_countdown_zero_immediate", "test_retry_countdown_nonzero_scheduled", "test_retry_no_countdown_default"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20}
-        }
+            "tests_required": [
+                "test_retry_countdown_zero_immediate",
+                "test_retry_countdown_nonzero_scheduled",
+                "test_retry_no_countdown_default",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20},
+        },
     },
     {
         "id": "QB-013",
@@ -213,9 +281,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `@pytest.mark.parametrize` with IDs containing brackets or spaces, the test node ID becomes malformed and pytest cannot select the test by ID.",
         "expected_fix": "Escape special characters in parameterized test IDs.",
         "evaluation": {
-            "tests_required": ["test_param_id_with_brackets", "test_param_id_with_spaces", "test_param_id_normal_unchanged"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 15}
-        }
+            "tests_required": [
+                "test_param_id_with_brackets",
+                "test_param_id_with_spaces",
+                "test_param_id_normal_unchanged",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 15},
+        },
     },
     {
         "id": "QB-014",
@@ -227,9 +299,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `session.bulk_insert_mappings()`, column defaults defined with `Column(default=...)` are not applied, resulting in NULL values.",
         "expected_fix": "Ensure column defaults are applied during bulk_insert_mappings.",
         "evaluation": {
-            "tests_required": ["test_bulk_insert_with_default", "test_bulk_insert_without_default_unchanged", "test_bulk_update_unchanged"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30}
-        }
+            "tests_required": [
+                "test_bulk_insert_with_default",
+                "test_bulk_insert_without_default_unchanged",
+                "test_bulk_update_unchanged",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30},
+        },
     },
     {
         "id": "QB-015",
@@ -241,9 +317,13 @@ PYTHON_ISSUES = [
         "problem_statement": "Black fails to format implicit string concatenation inside f-string expressions, leaving them unwrapped.",
         "expected_fix": "Handle string concatenation in f-string expressions during formatting.",
         "evaluation": {
-            "tests_required": ["test_fstring_concat_formatting", "test_normal_concat_unchanged", "test_nested_fstring_concat"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 40}
-        }
+            "tests_required": [
+                "test_fstring_concat_formatting",
+                "test_normal_concat_unchanged",
+                "test_nested_fstring_concat",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 40},
+        },
     },
     {
         "id": "QB-016",
@@ -255,9 +335,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `@click.option(type=click.Choice([1, 2, 3]))`, Click fails to validate integer choices correctly, treating them as strings.",
         "expected_fix": "Support integer (and other non-string) values in Choice type.",
         "evaluation": {
-            "tests_required": ["test_int_choice_validation", "test_int_choice_conversion", "test_str_choice_unchanged"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_int_choice_validation",
+                "test_int_choice_conversion",
+                "test_str_choice_unchanged",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-017",
@@ -269,9 +353,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `--root-path /api`, HTTP requests are correctly routed but WebSocket upgrade requests ignore the root path.",
         "expected_fix": "Apply root_path to WebSocket upgrade path matching.",
         "evaluation": {
-            "tests_required": ["test_websocket_root_path", "test_http_root_path_unchanged", "test_no_root_path_unchanged"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20}
-        }
+            "tests_required": [
+                "test_websocket_root_path",
+                "test_http_root_path_unchanged",
+                "test_no_root_path_unchanged",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20},
+        },
     },
     {
         "id": "QB-018",
@@ -283,9 +371,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When using `if isinstance(x, A): ... else: ...`, mypy does not narrow the type in the else branch for Union types.",
         "expected_fix": "Apply type narrowing in else branch for Union subtraction.",
         "evaluation": {
-            "tests_required": ["test_isinstance_else_narrowing", "test_union_subtraction", "test_no_isinstance_unchanged"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 35}
-        }
+            "tests_required": [
+                "test_isinstance_else_narrowing",
+                "test_union_subtraction",
+                "test_no_isinstance_unchanged",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 35},
+        },
     },
     {
         "id": "QB-019",
@@ -297,9 +389,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When an async generator using Redis is cancelled (e.g., via `asyncio.timeout`), the connection is not returned to the pool, causing pool exhaustion.",
         "expected_fix": "Ensure connection release in finally block of async generator.",
         "evaluation": {
-            "tests_required": ["test_async_gen_cancel_release", "test_normal_release_unchanged", "test_context_manager_unchanged"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_async_gen_cancel_release",
+                "test_normal_release_unchanged",
+                "test_context_manager_unchanged",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-020",
@@ -311,11 +407,14 @@ PYTHON_ISSUES = [
         "problem_statement": "When a macro defines a default argument that references a context variable, it fails to resolve at call time.",
         "expected_fix": "Ensure macro default arguments are evaluated in the correct context scope.",
         "evaluation": {
-            "tests_required": ["test_macro_default_context_var", "test_macro_default_literal_unchanged", "test_macro_call_with_override"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20}
-        }
+            "tests_required": [
+                "test_macro_default_context_var",
+                "test_macro_default_literal_unchanged",
+                "test_macro_call_with_override",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20},
+        },
     },
-    
     # Medium features/refactors (QB-021 to QB-030)
     {
         "id": "QB-021",
@@ -327,9 +426,13 @@ PYTHON_ISSUES = [
         "problem_statement": "Users want to include computed/dynamic properties in model serialization without manually adding them to model_config.",
         "expected_fix": "Implement `@computed_field` decorator that automatically includes decorated properties in model_dump().",
         "evaluation": {
-            "tests_required": ["test_computed_field_included", "test_computed_field_cached", "test_computed_field_with_deps"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80}
-        }
+            "tests_required": [
+                "test_computed_field_included",
+                "test_computed_field_cached",
+                "test_computed_field_with_deps",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80},
+        },
     },
     {
         "id": "QB-022",
@@ -341,9 +444,13 @@ PYTHON_ISSUES = [
         "problem_statement": "FastAPI supports exception handlers for HTTP but not for WebSocket connections, making error handling inconsistent.",
         "expected_fix": "Add `@app.websocket_exception_handler` decorator and WebSocketException class.",
         "evaluation": {
-            "tests_required": ["test_websocket_exception_handler", "test_websocket_exception_format", "test_http_handler_unchanged"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 60}
-        }
+            "tests_required": [
+                "test_websocket_exception_handler",
+                "test_websocket_exception_format",
+                "test_http_handler_unchanged",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 60},
+        },
     },
     {
         "id": "QB-023",
@@ -355,9 +462,14 @@ PYTHON_ISSUES = [
         "problem_statement": "Users need to register hooks that run before requests are sent and after responses are received for metrics/logging.",
         "expected_fix": "Implement `Client(event_hooks={'request': [...], 'response': [...]})` API.",
         "evaluation": {
-            "tests_required": ["test_request_hook_called", "test_response_hook_called", "test_async_hooks", "test_hook_error_handling"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 70}
-        }
+            "tests_required": [
+                "test_request_hook_called",
+                "test_response_hook_called",
+                "test_async_hooks",
+                "test_hook_error_handling",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 70},
+        },
     },
     {
         "id": "QB-024",
@@ -370,8 +482,13 @@ PYTHON_ISSUES = [
         "expected_fix": "Refactor to use visitor pattern with separate classes for each clause type. CC < 10 per class.",
         "evaluation": {
             "tests_required": ["test_all_existing_query_tests_pass", "test_visitor_classes_exist"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 180}
-        }
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 180,
+            },
+        },
     },
     {
         "id": "QB-025",
@@ -384,8 +501,13 @@ PYTHON_ISSUES = [
         "expected_fix": "Create `LineWrapper` class encapsulating all wrapping decisions. Reduce visitor method complexity.",
         "evaluation": {
             "tests_required": ["test_all_wrapping_tests_pass", "test_line_wrapper_class_exists"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 150}
-        }
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 150,
+            },
+        },
     },
     {
         "id": "QB-026",
@@ -397,9 +519,13 @@ PYTHON_ISSUES = [
         "problem_statement": "SQLAlchemy ORM events (before_insert, after_update, etc.) only support sync callbacks, preventing async operations in event handlers.",
         "expected_fix": "Allow async callbacks in ORM event listeners with proper event loop handling.",
         "evaluation": {
-            "tests_required": ["test_async_event_listener", "test_sync_listener_unchanged", "test_mixed_listeners"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80}
-        }
+            "tests_required": [
+                "test_async_event_listener",
+                "test_sync_listener_unchanged",
+                "test_mixed_listeners",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80},
+        },
     },
     {
         "id": "QB-027",
@@ -411,9 +537,13 @@ PYTHON_ISSUES = [
         "problem_statement": "The `-m` option only supports simple boolean expressions. Users need regex matching for marker names.",
         "expected_fix": "Support `-m '/pattern/'` syntax for regex marker selection.",
         "evaluation": {
-            "tests_required": ["test_regex_marker_selection", "test_regex_no_matches", "test_normal_marker_unchanged"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 40}
-        }
+            "tests_required": [
+                "test_regex_marker_selection",
+                "test_regex_no_matches",
+                "test_normal_marker_unchanged",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 40},
+        },
     },
     {
         "id": "QB-028",
@@ -425,9 +555,13 @@ PYTHON_ISSUES = [
         "problem_statement": "When dependency resolution fails, users get cryptic error messages without understanding why versions conflict.",
         "expected_fix": "Add `--verbose-resolve` flag that outputs resolution tree and conflict explanations.",
         "evaluation": {
-            "tests_required": ["test_verbose_resolve_output", "test_normal_resolve_unchanged", "test_conflict_explained"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 60}
-        }
+            "tests_required": [
+                "test_verbose_resolve_output",
+                "test_normal_resolve_unchanged",
+                "test_conflict_explained",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 60},
+        },
     },
     {
         "id": "QB-029",
@@ -439,9 +573,18 @@ PYTHON_ISSUES = [
         "problem_statement": "The routing trie matching logic is embedded in Router class, making it hard to test and optimize independently.",
         "expected_fix": "Create `RoutingTrie` class in new module with all matching logic. Router delegates to it.",
         "evaluation": {
-            "tests_required": ["test_all_routing_tests_pass", "test_routing_trie_class_exists", "test_trie_isolated"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 120}
-        }
+            "tests_required": [
+                "test_all_routing_tests_pass",
+                "test_routing_trie_class_exists",
+                "test_trie_isolated",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 120,
+            },
+        },
     },
     {
         "id": "QB-030",
@@ -453,11 +596,14 @@ PYTHON_ISSUES = [
         "problem_statement": "Celery supports task priorities for RabbitMQ but not for Redis, causing unfair task scheduling.",
         "expected_fix": "Implement priority queue support in Redis transport using sorted sets or multiple lists.",
         "evaluation": {
-            "tests_required": ["test_redis_task_priority", "test_priority_ordering", "test_no_priority_unchanged"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80}
-        }
+            "tests_required": [
+                "test_redis_task_priority",
+                "test_priority_ordering",
+                "test_no_priority_unchanged",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80},
+        },
     },
-    
     # Hard issues (QB-031 to QB-035)
     {
         "id": "QB-031",
@@ -469,9 +615,13 @@ PYTHON_ISSUES = [
         "problem_statement": "Black processes files sequentially. Large codebases take too long to format.",
         "expected_fix": "Add `-j/--jobs` option using multiprocessing.Pool for parallel file formatting.",
         "evaluation": {
-            "tests_required": ["test_parallel_formatting_correct", "test_parallel_no_race_conditions", "test_single_job_unchanged"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 100}
-        }
+            "tests_required": [
+                "test_parallel_formatting_correct",
+                "test_parallel_no_race_conditions",
+                "test_single_job_unchanged",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 100},
+        },
     },
     {
         "id": "QB-032",
@@ -483,9 +633,18 @@ PYTHON_ISSUES = [
         "problem_statement": "Dialect-specific compilation is spread across the core compiler with if/else chains. Adding new dialects requires modifying core.",
         "expected_fix": "Create DialectCompiler plugin interface. Move each dialect to separate module implementing this interface.",
         "evaluation": {
-            "tests_required": ["test_all_dialects_compile_correctly", "test_dialect_compiler_interface", "test_custom_dialect_registration"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 250}
-        }
+            "tests_required": [
+                "test_all_dialects_compile_correctly",
+                "test_dialect_compiler_interface",
+                "test_custom_dialect_registration",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 250,
+            },
+        },
     },
     {
         "id": "QB-033",
@@ -497,9 +656,14 @@ PYTHON_ISSUES = [
         "problem_statement": "Uvicorn only supports HTTP/1.1. Modern web apps need HTTP/2 features like server push.",
         "expected_fix": "Add HTTP/2 protocol handler with server push API. Maintain HTTP/1.1 compatibility.",
         "evaluation": {
-            "tests_required": ["test_http2_handshake", "test_server_push_api", "test_http1_fallback", "test_push_cache_digest"],
-            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 300}
-        }
+            "tests_required": [
+                "test_http2_handshake",
+                "test_server_push_api",
+                "test_http1_fallback",
+                "test_push_cache_digest",
+            ],
+            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 300},
+        },
     },
     {
         "id": "QB-034",
@@ -511,9 +675,18 @@ PYTHON_ISSUES = [
         "problem_statement": "Click's command parsing is implemented as nested conditional logic with manual backtracking. Complex commands have bugs.",
         "expected_fix": "Implement proper parser combinator library. Rewrite command parsing to use it. All existing tests pass.",
         "evaluation": {
-            "tests_required": ["test_all_existing_parsing_tests_pass", "test_combinator_classes_exist", "test_nested_commands_parsed_correctly"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 280}
-        }
+            "tests_required": [
+                "test_all_existing_parsing_tests_pass",
+                "test_combinator_classes_exist",
+                "test_nested_commands_parsed_correctly",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 280,
+            },
+        },
     },
     {
         "id": "QB-035",
@@ -525,9 +698,13 @@ PYTHON_ISSUES = [
         "problem_statement": "MyPy requires full annotations or ignores unannotated code. Users want gradual inference for legacy codebases.",
         "expected_fix": "Implement type inference engine for unannotated functions based on usage patterns. Add `--infer-types` flag.",
         "evaluation": {
-            "tests_required": ["test_inference_basic_functions", "test_inference_with_generics", "test_inference_limits"],
-            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 400}
-        }
+            "tests_required": [
+                "test_inference_basic_functions",
+                "test_inference_with_generics",
+                "test_inference_limits",
+            ],
+            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 400},
+        },
     },
 ]
 
@@ -544,9 +721,18 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Express query parser treats `?tags=a&tags=b` as array but `?tags[0]=a&tags[1]=b` as object, causing inconsistent behavior.",
         "expected_fix": "Handle both array formats consistently in query parser.",
         "evaluation": {
-            "tests_required": ["test_nested_array_query", "test_flat_array_query", "test_mixed_query"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30, "language": "typescript"}
-        }
+            "tests_required": [
+                "test_nested_array_query",
+                "test_flat_array_query",
+                "test_mixed_query",
+            ],
+            "quality_gates": {
+                "cc_max": 10,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 30,
+                "language": "typescript",
+            },
+        },
     },
     {
         "id": "QB-037",
@@ -558,9 +744,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "When using `router.param('id', fn)` with wildcard routes like `/*`, the param callback is not invoked.",
         "expected_fix": "Ensure param callbacks run before wildcard matching.",
         "evaluation": {
-            "tests_required": ["test_param_callback_wildcard", "test_param_callback_normal", "test_param_callback_order"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_param_callback_wildcard",
+                "test_param_callback_normal",
+                "test_param_callback_order",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-038",
@@ -572,9 +762,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Async route handlers that throw errors don't propagate to error middleware correctly without manual try/catch.",
         "expected_fix": "Auto-wrap async handlers to catch rejected promises and forward to error middleware.",
         "evaluation": {
-            "tests_required": ["test_async_error_caught", "test_sync_error_unchanged", "test_async_error_in_nested_router"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 40}
-        }
+            "tests_required": [
+                "test_async_error_caught",
+                "test_sync_error_unchanged",
+                "test_async_error_in_nested_router",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 40},
+        },
     },
     {
         "id": "QB-039",
@@ -586,9 +780,18 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Route matching logic is embedded in router/index.js. Complex route sets have performance issues.",
         "expected_fix": "Create RouteTrie class with optimized path-to-handler lookup.",
         "evaluation": {
-            "tests_required": ["test_all_routing_tests_pass", "test_route_trie_class", "test_performance_improvement"],
-            "quality_gates": {"cc_max": 12, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 150}
-        }
+            "tests_required": [
+                "test_all_routing_tests_pass",
+                "test_route_trie_class",
+                "test_performance_improvement",
+            ],
+            "quality_gates": {
+                "cc_max": 12,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 150,
+            },
+        },
     },
     {
         "id": "QB-040",
@@ -600,11 +803,15 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Express only supports HTTP/1.1. Modern applications need HTTP/2 features.",
         "expected_fix": "Add HTTP/2 compatibility layer maintaining all existing middleware API.",
         "evaluation": {
-            "tests_required": ["test_http2_handshake", "test_http2_push", "test_http1_fallback", "test_middleware_compatibility"],
-            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 250}
-        }
+            "tests_required": [
+                "test_http2_handshake",
+                "test_http2_push",
+                "test_http1_fallback",
+                "test_middleware_compatibility",
+            ],
+            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 250},
+        },
     },
-    
     # Next.js (QB-041 to QB-045)
     {
         "id": "QB-041",
@@ -616,9 +823,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Next.js Image component throws error when src points to external SVG URL without dimensions.",
         "expected_fix": "Handle SVG detection for external URLs and skip optimization.",
         "evaluation": {
-            "tests_required": ["test_external_svg_handled", "test_local_svg_unchanged", "test_external_png_unchanged"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_external_svg_handled",
+                "test_local_svg_unchanged",
+                "test_external_png_unchanged",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-042",
@@ -630,9 +841,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "When using `NextResponse.rewrite()` with query parameters containing special characters, they are not properly URL-encoded.",
         "expected_fix": "Ensure query parameters are encoded in rewrite URLs.",
         "evaluation": {
-            "tests_required": ["test_rewrite_query_encoded", "test_rewrite_no_query_unchanged", "test_rewrite_unicode"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20}
-        }
+            "tests_required": [
+                "test_rewrite_query_encoded",
+                "test_rewrite_no_query_unchanged",
+                "test_rewrite_unicode",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 20},
+        },
     },
     {
         "id": "QB-043",
@@ -644,9 +859,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Dynamic routes must choose between SSR (slow) or SSG (stale). Users want to prerender static shell and stream dynamic content.",
         "expected_fix": "Implement partial prerendering: static shell + suspense boundaries for dynamic data.",
         "evaluation": {
-            "tests_required": ["test_partial_prerender_generated", "test_shell_rendered_first", "test_dynamic_content_streamed"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 100}
-        }
+            "tests_required": [
+                "test_partial_prerender_generated",
+                "test_shell_rendered_first",
+                "test_dynamic_content_streamed",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 100},
+        },
     },
     {
         "id": "QB-044",
@@ -658,9 +877,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Server Actions only work in Node.js runtime. Edge runtime users cannot use them.",
         "expected_fix": "Implement Server Actions handler for Edge runtime with proper serialization.",
         "evaluation": {
-            "tests_required": ["test_edge_server_action", "test_action_serialization", "test_node_runtime_unchanged"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80}
-        }
+            "tests_required": [
+                "test_edge_server_action",
+                "test_action_serialization",
+                "test_node_runtime_unchanged",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 80},
+        },
     },
     {
         "id": "QB-045",
@@ -672,11 +895,19 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Webpack/Turbopack integration is hardcoded throughout Next.js. Adding new bundlers requires core changes.",
         "expected_fix": "Create BundlerPlugin interface. Migrate webpack to plugin. Add turbopack as separate plugin.",
         "evaluation": {
-            "tests_required": ["test_all_build_tests_pass", "test_bundler_plugin_interface", "test_webpack_as_plugin"],
-            "quality_gates": {"cc_max": 15, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 300}
-        }
+            "tests_required": [
+                "test_all_build_tests_pass",
+                "test_bundler_plugin_interface",
+                "test_webpack_as_plugin",
+            ],
+            "quality_gates": {
+                "cc_max": 15,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 300,
+            },
+        },
     },
-    
     # TypeORM (QB-046 to QB-050)
     {
         "id": "QB-046",
@@ -688,9 +919,12 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "When using `type: 'decimal'` with precision in SQLite, values are stored as REAL losing precision.",
         "expected_fix": "Store decimals as TEXT in SQLite with proper conversion.",
         "evaluation": {
-            "tests_required": ["test_decimal_sqlite_precision", "test_decimal_other_drivers_unchanged"],
-            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25}
-        }
+            "tests_required": [
+                "test_decimal_sqlite_precision",
+                "test_decimal_other_drivers_unchanged",
+            ],
+            "quality_gates": {"cc_max": 8, "no_new_bandit_issues": True, "max_lines_changed": 25},
+        },
     },
     {
         "id": "QB-047",
@@ -702,9 +936,12 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "When using `select: ['id', 'name']` in findOne, the relation IDs are not loaded even if relations are specified.",
         "expected_fix": "Include relation IDs in select results.",
         "evaluation": {
-            "tests_required": ["test_select_with_relations", "test_select_without_relations_unchanged"],
-            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30}
-        }
+            "tests_required": [
+                "test_select_with_relations",
+                "test_select_without_relations_unchanged",
+            ],
+            "quality_gates": {"cc_max": 10, "no_new_bandit_issues": True, "max_lines_changed": 30},
+        },
     },
     {
         "id": "QB-048",
@@ -716,9 +953,13 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Loading millions of rows with `getMany()` exhausts memory. Users need streaming interface.",
         "expected_fix": "Implement `stream()` method on QueryBuilder returning async iterator.",
         "evaluation": {
-            "tests_required": ["test_stream_basic", "test_stream_with_transform", "test_stream_error_handling"],
-            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 60}
-        }
+            "tests_required": [
+                "test_stream_basic",
+                "test_stream_with_transform",
+                "test_stream_error_handling",
+            ],
+            "quality_gates": {"cc_max": 12, "no_new_bandit_issues": True, "max_lines_changed": 60},
+        },
     },
     {
         "id": "QB-049",
@@ -731,8 +972,13 @@ TYPESCRIPT_ISSUES = [
         "expected_fix": "Create DriverQueryStrategy interface. Move each driver to separate strategy class.",
         "evaluation": {
             "tests_required": ["test_all_driver_tests_pass", "test_strategy_classes_exist"],
-            "quality_gates": {"cc_max": 10, "cc_reduction_required": True, "no_new_bandit_issues": True, "max_lines_changed": 200}
-        }
+            "quality_gates": {
+                "cc_max": 10,
+                "cc_reduction_required": True,
+                "no_new_bandit_issues": True,
+                "max_lines_changed": 200,
+            },
+        },
     },
     {
         "id": "QB-050",
@@ -744,24 +990,29 @@ TYPESCRIPT_ISSUES = [
         "problem_statement": "Entity decorators are validated at runtime. Many errors could be caught by TypeScript.",
         "expected_fix": "Implement advanced TypeScript types that validate entity schemas at compile time.",
         "evaluation": {
-            "tests_required": ["test_compile_time_validation", "test_invalid_schema_fails", "test_valid_schema_passes"],
-            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 150}
-        }
+            "tests_required": [
+                "test_compile_time_validation",
+                "test_invalid_schema_fails",
+                "test_valid_schema_passes",
+            ],
+            "quality_gates": {"cc_max": 15, "no_new_bandit_issues": True, "max_lines_changed": 150},
+        },
     },
 ]
+
 
 def generate_dataset_v1():
     """Generate the full dataset v1 JSON file."""
     dataset = DATASET_V1.copy()
     dataset["issues"] = PYTHON_ISSUES + TYPESCRIPT_ISSUES
-    
+
     # Validate
     assert len(dataset["issues"]) == 50, f"Expected 50 issues, got {len(dataset['issues'])}"
-    
+
     # Check IDs are unique
     ids = [i["id"] for i in dataset["issues"]]
     assert len(ids) == len(set(ids)), "Duplicate IDs found"
-    
+
     # Stats
     difficulties = {}
     categories = {}
@@ -770,11 +1021,11 @@ def generate_dataset_v1():
         difficulties[issue["difficulty"]] = difficulties.get(issue["difficulty"], 0) + 1
         categories[issue["category"]] = categories.get(issue["category"], 0) + 1
         repos.add(issue["repo"])
-    
+
     dataset["stats"]["by_difficulty"] = difficulties
     dataset["stats"]["by_category"] = categories
     dataset["stats"]["repositories"] = sorted(repos)
-    
+
     return dataset
 
 
@@ -782,13 +1033,13 @@ if __name__ == "__main__":
     dataset = generate_dataset_v1()
     output_path = Path("dataset/qualbench-v1.json")
     output_path.parent.mkdir(exist_ok=True)
-    
+
     with open(output_path, "w") as f:
         json.dump(dataset, f, indent=2)
-    
+
     print(f"Generated {output_path}")
     print(f"  Total issues: {len(dataset['issues'])}")
-    print(f"  Python: 35, TypeScript: 15")
+    print("  Python: 35, TypeScript: 15")
     print(f"  Repositories: {len(dataset['stats']['repositories'])}")
     print(f"  By difficulty: {dataset['stats']['by_difficulty']}")
     print(f"  By category: {dataset['stats']['by_category']}")

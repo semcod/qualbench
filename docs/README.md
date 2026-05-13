@@ -11,6 +11,8 @@
 
 ## Installation
 
+Install QualBench from PyPI or from source.
+
 ### From PyPI
 
 ```bash
@@ -34,7 +36,11 @@ pip install qualbench[all]    # all optional features
 
 ## Quick Start
 
+Get started with QualBench in under 60 seconds.
+
 ### CLI Usage
+
+Use the `qualbench` command to generate documentation, check health, and sync changes.
 
 ```bash
 # Generate full documentation for your project
@@ -151,6 +157,8 @@ qualbench/
 
 ## API Overview
 
+Key classes and functions exposed by the `qualbench` package.
+
 ### Classes
 
 - **`Handler`** — —
@@ -261,6 +269,8 @@ We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for gu
 
 ### Development Setup
 
+Set up a local development environment for contributing.
+
 ```bash
 # Clone the repository
 git clone https://github.com/semcod/qualbench
@@ -273,13 +283,15 @@ pip install -e ".[dev]"
 pytest
 ```
 
+Run the full test suite to verify your setup is working.
+
 ## Documentation
 
 - 📖 [Full Documentation](https://github.com/semcod/qualbench/tree/main/docs) — API reference, module docs, architecture
 - 🚀 [Getting Started](https://github.com/semcod/qualbench/blob/main/docs/getting-started.md) — Quick start guide
 - 📚 [API Reference](https://github.com/semcod/qualbench/blob/main/docs/api.md) — Complete API documentation
 - 🔧 [Configuration](https://github.com/semcod/qualbench/blob/main/docs/configuration.md) — Configuration options
-- 💡 [Examples](./examples) — Usage examples and code samples
+- 💡 [Examples](https://github.com/wronai/qualbench/tree/main/examples) — Usage examples and code samples
 
 ### Generated Files
 
@@ -287,15 +299,15 @@ pytest
 |--------|-------------|------|
 | `README.md` | Project overview (this file) | — |
 | `docs/api.md` | Consolidated API reference | [View](./docs/api.md) |
-| `docs/modules.md` | Module reference with metrics | [View](./docs/modules.md) |
-| `docs/architecture.md` | Architecture with diagrams | [View](./docs/architecture.md) |
-| `docs/dependency-graph.md` | Dependency graphs | [View](./docs/dependency-graph.md) |
-| `docs/coverage.md` | Docstring coverage report | [View](./docs/coverage.md) |
-| `docs/getting-started.md` | Getting started guide | [View](./docs/getting-started.md) |
-| `docs/configuration.md` | Configuration reference | [View](./docs/configuration.md) |
-| `docs/api-changelog.md` | API change tracking | [View](./docs/api-changelog.md) |
+| `docs/modules.md` | Module reference with metrics | [View](https://github.com/wronai/qualbench/blob/main/docs/modules.md) |
+| `docs/architecture.md` | Architecture with diagrams | [View](https://github.com/wronai/qualbench/blob/main/docs/architecture.md) |
+| `docs/dependency-graph.md` | Dependency graphs | [View](https://github.com/wronai/qualbench/blob/main/docs/dependency-graph.md) |
+| `docs/coverage.md` | Docstring coverage report | [View](https://github.com/wronai/qualbench/blob/main/docs/coverage.md) |
+| `docs/getting-started.md` | Getting started guide | [View](https://github.com/wronai/qualbench/blob/main/docs/getting-started.md) |
+| `docs/configuration.md` | Configuration reference | [View](https://github.com/wronai/qualbench/blob/main/docs/configuration.md) |
+| `docs/api-changelog.md` | API change tracking | [View](https://github.com/wronai/qualbench/blob/main/docs/api-changelog.md) |
 | `CONTRIBUTING.md` | Contribution guidelines | [View](./CONTRIBUTING.md) |
-| `examples/` | Usage examples | [Browse](./examples) |
+| `examples/` | Usage examples | [Browse](https://github.com/wronai/qualbench/tree/main/examples) |
 | `mkdocs.yml` | MkDocs configuration | — |
 
 <!-- code2docs:end -->

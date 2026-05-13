@@ -56,6 +56,8 @@ One format. Used everywhere: CLI output, API responses, GitHub Action comments, 
 
 ## Usage
 
+The schema is used consistently across CLI output, API responses, GitHub Action comments, and leaderboard entries.
+
 ```bash
 # CLI
 qualbench run --tool prollama --json
@@ -64,10 +66,15 @@ qualbench run --tool prollama --json
 from qualbench.benchmark import QualBenchRunner
 result = QualBenchRunner(tool="prollama").run()
 print(result.to_json())
-
-# GitHub Action
-# Result available as step output: ${{ steps.qualbench.outputs.result_json }}
 ```
+
+For GitHub Actions, the result is available as step output:
+
+```yaml
+${{ steps.qualbench.outputs.result_json }}
+```
+
+The GitHub Action step output contains the full JSON result for downstream CI logic.
 
 ## Verdicts
 
@@ -78,6 +85,8 @@ print(result.to_json())
 | `not_merge_ready` | <65 | Requires significant rework |
 
 ## Examples
+
+Concrete JSON payloads for each verdict category.
 
 ### Ready to merge (high quality)
 ```json
@@ -155,6 +164,8 @@ print(result.to_json())
 ```
 
 ## Edge Cases
+
+Handling of unusual or boundary conditions in scoring.
 
 ### Unresolved (tests failing)
 When tests fail (`correctness: 0`), the score formula automatically zeros out iterations and cost dimensions:
