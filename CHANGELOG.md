@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - docs: update project docs and TODO after PyQual run; add configuration management system notes
 - chore: update PyQual artifacts after successful run; mark gates passing
 
+## [0.3.2] - 2026-06-29
+
+### Docs
+- Update README.md
+
 ## [0.3.1] - 2026-04-09
 
 ### Docs
