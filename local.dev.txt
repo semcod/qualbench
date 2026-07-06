@@ -1,0 +1,8 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: qualbench 0.3.2 (python) at /home/tom/github/semcod/qualbench
+# deps declared: 13 | with local source: 0
+
+## LOCAL DEPS: none — all dependencies are external
+
+## EXTERNAL DEPS (no local source, 12): GitPython, bandit, click, fastapi, httpx, pydantic, pytest, pytest-cov, radon, requests, ruff, uvicorn
