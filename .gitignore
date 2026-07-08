@@ -43,3 +43,8 @@ docker-compose.override.yml
 # Environment variables
 .env
 test_content_filter.py
+.code2llm_cache/
+.data/
+.github/
+.pyqual/
+.taskill/
