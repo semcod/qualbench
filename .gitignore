@@ -48,3 +48,12 @@ test_content_filter.py
 .github/
 .pyqual/
 .taskill/
+
+# Local ticket worktrees and private recovery state
+/.worktrees/
+/.subactor/leases/
+/.subactor/sessions/
+/.subactor/recovery/
+/.subactor/receipts/
+/.subactor/cache/
+/.subactor/snapshots/
