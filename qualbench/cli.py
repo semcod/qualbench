@@ -317,6 +317,15 @@ def leaderboard(api_url, issue, tool) -> None:
 
 
 def main() -> None:
+    try:
+        from .autoupdate import check_for_updates
+        check_for_updates("qualbench")
+    except Exception:
+        try:
+            from qualbench.autoupdate import check_for_updates
+            check_for_updates("qualbench")
+        except Exception:
+            pass
     cli()
 
 
