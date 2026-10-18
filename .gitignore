@@ -57,3 +57,5 @@ test_content_filter.py
 /.subactor/receipts/
 /.subactor/cache/
 /.subactor/snapshots/
+.koru/
+.planfile/

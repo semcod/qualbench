@@ -5,6 +5,6 @@ Measures production readiness of AI-generated code, not just correctness.
 eslint + code review, but for AI.
 """
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 __author__ = "Softreck"
 __license__ = "Apache-2.0"

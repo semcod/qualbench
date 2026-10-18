@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "qualbench"
-version = "0.3.2"
+version = "0.3.3"
 description = "CI for AI-generated code — measures production readiness, not just correctness"
 readme = "README.md"
-license = "Apache-2.0"
+license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 authors = [
     { name = "Softreck", email = "info@softreck.com" },
